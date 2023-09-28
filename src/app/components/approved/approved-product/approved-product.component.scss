@@ -1,0 +1,59 @@
+.float1 {
+    float: left;
+}
+
+.error {
+    color: #da2339;
+}
+
+select.form-control:not([size]):not([multiple]) {
+    height: calc(1.8rem + 2px);
+}
+
+.full-data-show-entry {
+    width: 75px;
+    display: inline-block;
+}
+
+.full-data-search {
+    display: inline-block;
+    width: auto !important;
+}
+
+.form-control {
+    font-size: 13px;
+    border-radius: 2px;
+}
+
+.imgTable1 {
+    width: 39px;
+    height: 39px;
+}
+
+table {
+
+    text-align: center;
+
+}
+
+// textarea{
+//     height: ;
+//     width: ;
+//    
+// }
+
+img {
+    width: 220px;
+    height: 135px;
+
+}
+
+#increasediv {
+    height: 130px;
+    width: 250px;
+    text-align: left;
+}
+
+.my-pagination ::ng-deep .ngx-pagination .current {
+    background: #ff8084;
+}

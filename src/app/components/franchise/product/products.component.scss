@@ -1,0 +1,61 @@
+.float1 {
+    float: left;
+}
+
+select.form-control:not([size]):not([multiple]) {
+    height: calc(1.8rem + 2px);
+}
+
+.full-data-show-entry {
+    width: 75px;
+    display: inline-block;
+}
+
+.full-data-search {
+    display: inline-block;
+    width: auto!important;
+}
+
+.form-control {
+    font-size: 13px;
+    border-radius: 2px;
+}
+
+ :host(.title) {
+    margin-right: 6px;
+    margin-top: -11px;
+}
+
+#treeparent {
+    max-height: 17rem;
+    min-height: 17rem;
+}
+
+.no-records {
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+}
+
+.top-cap-text {
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, .125);
+}
+
+
+/* Chrome, Safari, Edge, Opera */
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+
+/* Firefox */
+
+input[type=number] {
+    -moz-appearance: textfield;
+}

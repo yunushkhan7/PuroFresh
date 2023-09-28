@@ -1,0 +1,278 @@
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="adduserflag == false && edituserflag == false">
+        <div class="card" >
+            <div class="card-header" >
+                <h5 class="float1">Vendor Transaction Details</h5>
+				        <button type="button" class="btn btn-secondary f-right" (click)="addtransactions()">Add Transactions</button>
+            </div>
+		 <div class="card-body" >
+              <div style="float: right;">
+                <select class="form-control input-sm full-data-show-entry" style="width: 100%;">
+                    <option value="pending">Pending</option>
+                    <option value="in_progress">In-Progress</option>
+                    <option value="completed">Completed</option>
+                  </select>
+                </div>
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <!-- <div class="table-responsive"> -->
+                    <!-- <ng2-smart-table [settings]="settings" [source]="user_list"></ng2-smart-table> -->
+                <!-- </div> -->
+				<div class="project-table">
+        <div id="crm-contact" class="dt-responsive">
+          <div class="row">
+            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+              <div>
+                <label class="label-control">Show
+                  <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                    <option [ngValue]="5">5</option>
+					<option [ngValue]="10">10</option>
+                    <option [ngValue]="25">25</option>
+                    <option [ngValue]="50">50</option>
+                    <option [ngValue]="100">100</option>
+                  </select>
+                  entries
+                </label>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-6">
+              <div style="text-align: right;">
+                <label>Search:
+                   <input type="search" [(ngModel)]="filterQuery" class="form-control input-sm full-data-search" placeholder="Search name">
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- <div class="panel-heading">User information</div>-->
+          <div >
+          <div class="table-responsive">
+            <table class="table table-striped table-bordered full-data-table" [mfData]="vendors" #mf="mfDataTable"
+              [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder">
+              <thead>
+               <tr>
+                  <th>
+                    <mfDefaultSorter by="date">Date</mfDefaultSorter>
+                  </th>
+                  <th>
+                    <mfDefaultSorter by="vendor_code">Vendor Code</mfDefaultSorter>
+                  </th>
+				  <th>
+                    <mfDefaultSorter by="vendor">Vendor Name</mfDefaultSorter>
+                  </th>
+				   <th>
+                    <mfDefaultSorter by="product_name">Product Name</mfDefaultSorter>
+                  </th>
+				  <th>
+                    <mfDefaultSorter by="product_code">Product Code</mfDefaultSorter>
+                  </th>
+				   <th>
+                    <mfDefaultSorter by="quantity">Quantity</mfDefaultSorter>
+                  </th>
+                  <th>
+                      <mfDefaultSorter by="status">Status</mfDefaultSorter>
+                    </th>
+				  <th>
+                    <mfDefaultSorter>Action</mfDefaultSorter>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let role of mf.data | dataFilter: {vendor: filterQuery};">
+                  <td >{{role.date}}</td>
+				          <td>{{role.vendor_code}}</td>
+                  <td>{{role.vendor}}</td>
+				          <td>{{role.product_name}}</td>
+				          <td>{{role.product_code}}</td>
+                  <td>{{role.quantity}}</td>
+                  <td>{{role.status}}</td>
+				          <td class="action-icon">
+                    <a href="javascript:;" class="m-r-15 crm-action-edit text-muted text-primary" (click)="edituser(role)"><i
+                        class="icofont icofont-ui-edit"></i></a>
+                    <a href="javascript:;" class="crm-action-delete text-muted text-danger"><i
+                        class="icofont icofont-delete-alt"></i></a>
+                  </td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="10">
+                     <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator>
+                     <div *ngIf= "!vendors?.length" class="no-records">
+                        No records found!...
+                      </div>
+                  </td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        </div>
+      </div>
+            </div>
+        </div>
+        
+        </div>
+    </div>
+
+
+    <div class="container-fluid" *ngIf="adduserflag == true && edituserflag == false">
+    <div class="card" >
+      <div class="card-header">
+        <h5>Add Transaction</h5>
+      </div>
+      <div class="card-body">
+      <div class="row">
+       <div class="col-sm-12">
+        <form [formGroup]="userForm" (ngSubmit)="AddEmployee(employeeAddData)">
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Date</label>
+                <div class="col-sm-4">
+                    <input type="date" class="form-control" placeholder="select Date">
+    
+                 </div>
+              <label class="col-sm-2 col-form-label">Mobile Number</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" placeholder="Enter Mobile Number">
+
+             </div>
+          </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Vendor Code</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" placeholder="Vendor Code">
+          </div>
+                <label class="col-sm-2 col-form-label">Vendor Name</label>
+             <div class="col-sm-4">
+              <input type="text" class="form-control" placeholder="Vendor Name">
+          </div>
+            </div>
+    
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">Product Name</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Product Name">
+    
+                 </div>
+              <label class="col-sm-2 col-form-label">Product Code</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" placeholder="Product Code">
+
+             </div>
+          </div>
+
+          <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Quantity</label>
+              <div class="col-sm-4">
+                  <input type="text" class="form-control" placeholder="Quantity">
+  
+               </div>
+            <label class="col-sm-2 col-form-label">Status</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" placeholder="Status">
+
+           </div>
+        </div>
+    
+          <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Total Amount</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" placeholder="Total Amount">
+
+             </div>
+              <label class="col-sm-2 col-form-label">Remarks</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" placeholder="Remarks">
+
+             </div>
+          </div>
+          <div class="text-right">
+          <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Save</button>
+          <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="Closebtn()">Close</button>
+        </div>
+        </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    </div>
+
+    <div class="container-fluid" *ngIf="adduserflag == false && edituserflag == true">
+        <div class="card" >
+          <div class="card-header">
+            <h5>Edit Transaction</h5>
+          </div>
+          <div class="card-body">
+          <div class="row">
+           <div class="col-sm-12">
+            <form [formGroup]="userForm" (ngSubmit)="AddEmployee(employeeAddData)">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Date</label>
+                    <div class="col-sm-4">
+                        <input type="date" class="form-control" placeholder="select Date">
+        
+                     </div>
+                  <label class="col-sm-2 col-form-label">Mobile Number</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Enter Mobile Number">
+    
+                 </div>
+              </div>
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Vendor Code</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Vendor Code">
+              </div>
+                    <label class="col-sm-2 col-form-label">Vendor Name</label>
+                 <div class="col-sm-4">
+                  <input type="text" class="form-control" placeholder="Vendor Name">
+              </div>
+                </div>
+        
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Product Name</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Product Name">
+        
+                     </div>
+                  <label class="col-sm-2 col-form-label">Product Code</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Product Code">
+    
+                 </div>
+              </div>
+    
+              <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">Quantity</label>
+                  <div class="col-sm-4">
+                      <input type="text" class="form-control" placeholder="Quantity">
+      
+                   </div>
+                <label class="col-sm-2 col-form-label">Status</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" placeholder="Status">
+    
+               </div>
+            </div>
+        
+              <div class="form-group row">
+                  <label class="col-sm-2 col-form-label">Total Amount</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Total Amount">
+    
+                 </div>
+                  <label class="col-sm-2 col-form-label">Remarks</label>
+                  <div class="col-sm-4">
+                    <input type="text" class="form-control" placeholder="Remarks">
+    
+                 </div>
+              </div>
+              <div class="text-right">
+              <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Save</button>
+              <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="Closebtn()">Close</button>
+            </div>
+            </form>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+    <!-- Container-fluid Ends-->

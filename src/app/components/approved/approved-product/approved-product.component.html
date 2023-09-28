@@ -1,0 +1,487 @@
+<!-- add discount list -->
+<div class="container-fluid" *ngIf="addproduct == true">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5 class="float1">Approval</h5>
+                </div>
+                <div class="col-sm-2">
+                    <div [hidden]="!chekUserType()">
+
+                        <select class="status form-control" (change)="onChangeFran($event.target.value)">
+                            <option value="" selected>Select Franchaise</option>
+                            <option *ngFor="let  fran of  franchise" value={{fran.franchaseId}}>{{fran.franchaseName}}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <!-- <div class="col-sm-3">
+                    <button type="button" class="btn btn-secondary f-right" (click)="back()">Back</button>
+                </div> -->
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="card-body">
+                    <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                        <div class="project-table">
+                            <div id="crm-contact" class="dt-responsive">
+                                <div class="row">
+                                    <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                        <div>
+                                            <label class="label-control">Show
+                                                <select class="form-control input-sm full-data-show-entry"
+                                                    (change)="onChange($event.target.value)">
+                                                    <option [ngValue]="5">5</option>
+                                                    <option [ngValue]="10">10</option>
+                                                    <option [ngValue]="25">25</option>
+                                                    <option [ngValue]="50">50</option>
+                                                    <option [ngValue]="100">100</option>
+                                                </select>
+                                                entries
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-12 col-sm-12 col-md-6">
+                                        <div style="text-align: right;">
+                                            <label>Search:
+                                                <input type="search" [(ngModel)]="searchText" autocomplete="off"
+                                                    class="form-control input-sm full-data-search"
+                                                    placeholder="search by any">
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered full-data-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Image <i (click)="sort('productImage')" class="fa fa-sort"
+                                                            aria-hidden="true"></i> </th>
+                                                    <th> Product Name <i (click)="sort('productName')"
+                                                            class="fa fa-sort" aria-hidden="true"></i></th>
+                                                    <th> Category <i (click)="sort('categoryName')" class="fa fa-sort"
+                                                            aria-hidden="true"></i></th>
+                                                    <th> Status <i (click)="sort('isActive')" class="fa fa-sort"
+                                                            aria-hidden="true"></i></th>
+                                                    <th> Action </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr
+                                                    *ngFor="let app of approval | paginate: { itemsPerPage: pageno, currentPage: q } | filter: searchText | orderBy: key: !reverse">
+                                                    <td><img src="{{app.productImage}}" class='imgTable1'></td>
+                                                    <td>{{app.productName}}</td>
+                                                    <td>{{app.categoryName}}</td>
+                                                    <td *ngIf="app.isActive == true">Active</td>
+                                                    <td *ngIf="app.isActive == false">InActive</td>
+                                                    <td class="action-icon">
+                                                        <a href="javascript:;" (click)="edit(app)"
+                                                            class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                                class="icofont icofont-edit-alt"></i></a>
+                                                        <a href="javascript:;"
+                                                            class="m-r-15 crm-action-delete text-muted text-danger"><i
+                                                                class="icofont icofont-delete-alt"
+                                                                (click)="deleteProduct(product.productId)"></i></a>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+
+                                            <tfoot>
+                                                <tr>
+                                                    <td colspan="10" *ngIf="!approval?.length">
+                                                        <div class="no-records">
+                                                            No records found!...
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tfoot>
+                                        </table>
+                                        <pagination-controls style="float: right" class="my-pagination"
+                                            (pageChange)="onPageChange($event)"></pagination-controls>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<div class="container-fluid" *ngIf="editProduct == true">
+
+
+
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h5 class="float1">Edit Product</h5>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-secondary f-right" (click)="CloseProduct()">Back</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- <form [formGroup]="ProductUpdateForm"> -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product name</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" placeholder="product name"
+                                [(ngModel)]="editproduct.productName">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product image</label>
+                        <div class="col-sm-3">
+
+                            <input type="file" (change)="onChange1($event)" [(fileModel)]="editproduct.productImage"
+                                alife-file-to-base64 class="form-control" accept="image/x-png,image/jpeg"
+                                placeholder="product image">
+                            <!-- <div class="error" *ngIf="imagemessage == true">*Uploaded image size should be in 350*327</div> -->
+                        </div>
+                        <div class="col-sm-1">
+                            <button class="btn btn-primary" (click)="image()" data-toggle="modal"
+                                data-target=".bd-example-modal-lg">View Image</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Catagory</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" class="form-control" [(ngModel)]="editproduct.categoryId">
+                                <option value="">--Select--</option>
+                                <option *ngFor="let category of Allactivecategories" value={{category.categoryId}}>
+                                    {{category.categoryName}}</option>
+                            </select>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">Quantity<sub>(in digits)</sub></label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.quantity" formControlName="quantity" placeholder="Quantity">
+                </div> -->
+                        <!-- <label class="col-sm-2 col-form-label">Total stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.totalStock" placeholder="Total stock">
+                        </div> -->
+                    </div>
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Balance stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.balance" placeholder="Total stock">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Ordered stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.orderPlaced" placeholder="Total stock">
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Threshold</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" placeholder="Threshold" [(ngModel)]="editproduct.threshold">
+                        </div>
+                    </div> -->
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Short description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" [(ngModel)]="editproduct.shortDescription"
+                                placeholder="Short description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" [(ngModel)]="editproduct.productDescription"
+                                placeholder="Product description"></textarea>
+                        </div>
+                    </div>
+
+                    <h5 style="font-weight: 700;">Product details</h5>
+                    <hr>
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.actualAmount" placeholder="Product price">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Sale price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.discountAmount" placeholder="Sale price">
+                            <div *ngIf="pricemessage == true" class="error">Sale price should be less than or equal to product price</div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Net wt</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.netWeight" placeholder="Net weight">
+
+                        </div>
+                        <label class="col-sm-2 col-form-label">Gross wt</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.grossWeight" placeholder="Gross weight">
+                            <div *ngIf="weightmessage == true" class="error">Gross weight should be greater than Net weight</div>
+                        </div>
+                    </div> -->
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Delivery charge</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1"
+                                [(ngModel)]="editproduct.deliveryCharges" placeholder="Delivery charge">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product type</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="productType" [(ngModel)]="editproduct.productType"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option value="Perishable">Perishable </option>
+                                <option value="NotPerishable">Non Perishable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Lead days<sub>(in days)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="editproduct.leadDays" placeholder="Lead days">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Tax<sub>(%)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1"
+                                [(ngModel)]="editproduct.tax" step='0.01' value='0.00' placeholder='0.00'>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">LeadTime<sub>(in hrs)</sub></label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" min="1" [(ngModel)]="editproduct.leadTime" formControlName="leadTime" placeholder="Leadtime">
+                </div> -->
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="isActive" [(ngModel)]="editproduct.isActive"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option [ngValue]="true">Active</option>
+                                <option [ngValue]="false">InActive</option>
+                            </select>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">Measurement</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="prodMeasurementId" [(ngModel)]="editproduct.prodMeasurementId" class="form-control">
+                <option value="" selected>--Select--</option>
+                <option *ngFor="let measurement of measuremntTypes" value={{measurement.prodMeasurementId}}>{{measurement.measurementName}}</option>
+              </select>
+                        </div> -->
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Order Id</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="editproduct.orderNo" placeholder="Order number for display">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="isDiscount" [(ngModel)]="editproduct.isDiscount"
+                                [ngModelOptions]="{standalone: true}"> Apply Discount
+                        </div>
+                    </div>
+
+                    <input type="checkbox" name="test" [(ngModel)]="editproduct.newArrival"
+                        (click)="selectCheckBoxnewarrival($event)" [ngModelOptions]="{standalone: true}"> New
+                    <input type="checkbox" name="test" [(ngModel)]="editproduct.trending"
+                        (click)="selectCheckBoxtrending($event)" [ngModelOptions]="{standalone: true}"> Trending
+
+                    <!-- <input type="checkbox" name="test" [(ngModel)]="editproduct.isApproved" value="isApproved" (click)="selectCheckBoxtisApproved($event)" [ngModelOptions]="{standalone: true}"> Approved -->
+
+
+
+
+
+                    <!-- <input type="checkbox" name="test" [(ngModel)]="editproduct.isDiscount" [checked]="currentlyChecked === check_box.isDiscount" (click)="selectCheckBox(check_box.isDiscount)" [ngModelOptions]="{standalone: true}"> Discount -->
+
+                    <!-- <input type="radio" value="newArrival" [(ngModel)]="editproduct.newArrival" formControlName="typeofproduct"> New
+            <input type="radio" value="trending" [(ngModel)]="editproduct.trending" formControlName="typeofproduct"> Trending
+            <input type="radio" value="isDiscount"  [(ngModel)]="editproduct.isDiscount" formControlName="typeofproduct"> Discount -->
+
+                    <!-- <div class="form-group row">
+              <div class="col-sm-5">
+              <label class="col-sm-2">New</label>
+                  <input [(ngModel)]="editproduct.newArrival"  formControlName="newArrival" type="checkbox"/>
+              <label class="col-sm-3">Trending</label>
+                <input [(ngModel)]="editproduct.trending" formControlName="trending" type="checkbox"/>
+                <label class="col-sm-3">Discount</label>
+                <input [(ngModel)]="editproduct.isDiscount" formControlName="isDiscount" type="checkbox"/>
+              </div>
+              <div class="col-sm-4">
+              </div>
+            </div> -->
+
+
+
+                    <div class="table-responsive">
+                        <form [formGroup]="orderForm">
+                            <table class="table table-stripped table-bordered full data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">
+                                            Quantity
+                                        </th>
+                                        <th style="text-align: center;">
+                                            Gross weight
+                                        </th>
+
+                                        <th style="text-align: center;">
+
+                                            Net weight
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Actual Price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Sales price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Measurement
+                                        </th>
+
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+
+
+
+                                <tbody formArrayName="items">
+                                    <tr *ngFor="let itemrow of orderForm.controls.items.controls; let i=index;let l=last"
+                                        [formGroupName]="i">
+
+                                        <td>
+                                            <input type="number" formControlName="quantity" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="grossWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="netWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="actualPrice" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="salePrice" class="form-control">
+                                        </td>
+                                        <td>
+                                            <select class="custom-select" formControlName="prodMeasurementId"
+                                                class="form-control">
+
+                                                <option value="">select</option>
+                                                <option *ngFor="let measurement of measuremntTypes"
+                                                    value="{{measurement.prodMeasurementId}}">
+                                                    {{measurement.measurementName}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button *ngIf="orderForm.controls.items.controls.length > 1"
+                                                (click)="deleteRow(i)" class="btn btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+
+
+
+                                </tbody>
+                            </table>
+                        </form>
+                        <div>
+                            <button class="btn btn-primary" (click)="addItem()"
+                                style="margin: 1px;float: right;">Add</button>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    <div class="text-right">
+                        <!-- <button type="submit" [disabled]="!ProductUpdateForm.valid" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block" (click)="addexstingProduct(editproduct)">Add New</button> -->
+                        <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                            (click)="updateProduct(editproduct)">Approved</button>
+                        <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                            (click)="CloseProduct()">Close</button>
+                    </div>
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+<!-- ------------------------------------POP UP MESSAGE-------------------------------------------- -->
+<div *ngIf="approved == true">
+
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Product Image </h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-sm-4"></div>
+                            <div class="col-sm-8">
+                                <img src="{{editproduct.productImage}}">
+
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- <div *ngFor="let app of approval">
+                        
+                    </div> -->
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,33 @@
+.float1{
+  float: left;
+}
+
+select.form-control:not([size]):not([multiple]) {
+    height: calc(1.8rem + 2px);
+}
+
+.full-data-show-entry {
+    width: 75px;
+    display: inline-block;
+}
+
+.full-data-search {
+    display: inline-block;
+    width: auto!important;
+}
+
+.form-control {
+    font-size: 13px;
+    border-radius: 2px;
+}
+
+@media (min-width: 992px) {
+    .modal-dialog {
+      max-width: 80%;
+    }
+  }
+
+.imgTable1 {
+    width: 39px;
+    height: 39px;
+}

@@ -1,0 +1,667 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="showdetails == false && showedit == false && showadd == false">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="float1">Vendor's List</h5>
+            <button type="button" class="btn btn-secondary f-right" data-toggle="modal" data-original-title="test"
+                data-target="#exampleModal" (click)="addvendor()">Add Vendor</button>
+        </div>
+        <div class="card-body">
+            <!--<div class="btn-popup pull-right">
+                    <a class="btn btn-secondary" [routerLink]="'/users/create-user'">Create User</a>
+                </div>-->
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <!-- <div class="table-responsive"> -->
+                <!-- <ng2-smart-table [settings]="settings" [source]="user_list"></ng2-smart-table> -->
+                <!-- </div> -->
+                <div class="project-table">
+                    <div id="crm-contact" class="dt-responsive">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                <div>
+                                    <label class="label-control">Show
+                                        <select class="form-control input-sm full-data-show-entry"
+                                            [(ngModel)]="rowsOnPage">
+                                            <option [ngValue]="10">10</option>
+                                            <option [ngValue]="25">25</option>
+                                            <option [ngValue]="50">50</option>
+                                            <option [ngValue]="100">100</option>
+                                        </select>
+                                        entries
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div style="text-align: right;">
+                                    <label>Search:
+                                        <input type="search" [(ngModel)]="filterQuery"
+                                            class="form-control input-sm full-data-search" placeholder="search by any">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="panel-heading">User information</div>-->
+                        <div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered full-data-table">
+                                    <!-- [mfData]="data" #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder"> -->
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <!-- <mfDefaultSorter by="vendorTypeName"> -->
+                                                Vendor type
+                                                <!-- </mfDefaultSorter> -->
+                                            </th>
+                                            <th>
+                                                <!-- <mfDefaultSorter by="vendorName"> -->
+                                                Vendor name
+                                                <!-- </mfDefaultSorter> -->
+                                            </th>
+                                            <th>
+                                                <!-- <mfDefaultSorter by="entityName"> -->
+                                                Entity
+                                                <!-- </mfDefaultSorter> -->
+                                            </th>
+                                            <th>
+                                                <!-- <mfDefaultSorter by="vendorPriorityName"> -->
+                                                Vendor priority
+                                                <!-- </mfDefaultSorter> -->
+                                            </th>
+                                            <th>
+                                                <!-- <mfDefaultSorter by="mobile"> -->
+                                                Mobile no
+                                                <!-- </mfDefaultSorter>  -->
+                                            </th>
+                                            <th>
+                                                <!-- <mfDefaultSorter> -->
+                                                Action
+                                                <!-- </mfDefaultSorter> -->
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let vendor of data | dataFilter: {vendorTypeName: filterQuery,vendorName: filterQuery, vendorPriorityName: filterQuery, entityName: filterQuery, mobile: filterQuery};">
+                                                <td>{{vendor.vendorTypeName}}</td>
+                                                <td>{{vendor.vendorName}}</td>
+                                                <td>{{vendor.entityName}}</td>
+                                                <td>{{vendor.vendorPriorityName}}</td>
+                                                <td>{{vendor.mobile}}</td>
+                                            <td class="action-icon">
+                                                <!-- <a href="javascript:;" class="m-r-15 crm-action-edit text-muted text-primary" (click)="viewproduct(role)"><i
+                            class="icofont icofont-eye-alt" (click)="viewproduct(role)"></i></a> -->
+                                                <a href="javascript:;"
+                                                    class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                        class="icofont icofont-ui-edit"
+                                                        (click)="editVendor(vendor)"></i></a>
+                                                <a href="javascript:;" (click)="deleteVendor(vendor.vendorId)"
+                                                    class="crm-action-delete text-muted text-danger"><i
+                                                        class="icofont icofont-delete-alt"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="10">
+                                                <!-- <mfBootstrapPaginator class="pagination-main f-right">
+                                                </mfBootstrapPaginator> -->
+                                                <div *ngIf="!data?.length" class="no-records">
+                                                    No records found!...
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="card-body">
+       
+            <div class="btn-popup pull-right">
+                <a class="btn btn-secondary" [routerLink]="'/users/create-user'">Create User</a>
+            </div>
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                 <div class="table-responsive"> 
+                            <ng2-smart-table [settings]="settings" [source]="vendors" (deleteConfirm)="onDeleteConfirm($event)" (editConfirm)="onSaveConfirm($event)"
+                            (createConfirm)="onCreateConfirm($event)" (custom)="viewbutton($event)"></ng2-smart-table>
+ 
+                </div> 
+                <div class="container">
+                    <angular-slickgrid gridId="grid1"
+                              [columnDefinitions]="columnDefinitions"
+                              [gridOptions]="gridOptions"
+                              [dataset]="dataset"
+                              [columnDefinitions]="columnDefinitions"
+                              gridHeight="420" 
+                              gridWidth="auto">
+                    </angular-slickgrid>
+                  </div>
+            </div>
+        </div>-->
+    </div>
+</div>
+
+<!-- Container-fluid Ends-->
+
+<div class="row" *ngIf="showdetails == true && showedit == false">
+    <div class="col-sm-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="float1">Vendor Details</h5>
+                <button type="button" class="btn btn-secondary f-right" (click)="close()">Back</button>
+            </div>
+
+            <div class="row" style="padding: 8px;">
+                <div class="col-lg-12">
+
+                    <ngb-tabset>
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><i class="icofont icofont-ui-user"></i>Vender Details
+                            </ng-template>
+                            <ng-template ngbTabContent>
+                                <div class="card-body" style="min-height: 24rem;">
+                                    <div class="col-lg-12">
+                                        <div class="row">
+                                            <div class="table-editable col-lg-12 col-xl-12">
+                                                <table class="table">
+                                                    <tr>
+                                                        <tbody>
+                                                            <tr>
+                                                                <th>Vendor Name</th>
+                                                                <td>Sathish </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Phone No</th>
+                                                                <td>9876543210</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Email Id</th>
+                                                                <td>sathish@gmail.com</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <th>Address</th>
+                                                                <td>#67, Coconut Avenue Road, Malleshwaram,B'lore-03
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                            <!-- <div class="table-editable col-lg-12 col-xl-6">
+                                                      <table class="table">
+                                                          <tr>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <th  style="border-top: 0;">Address</th>
+                                                                    <td  style="border-top: 0;">#67, 4th main, 8th cross, Malleswaram, Karnataka, Bangalore-560003</td>
+                                                                  </tr>             
+                                                              </tbody>          
+                                                              </tr>
+                                                        </table>
+                                                    </div>  -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><i class="icofont icofont-history"></i>Order Details </ng-template>
+                            <ng-template ngbTabContent>
+                                <div [@fadeInOutTranslate] class="m-t-5">
+                                    <div class="card"> </div>
+                                    <div class="card-body" *ngIf="showOrderedit == false">
+                                        <div class="table-content crm-table">
+                                            <div class="project-table">
+                                                <div id="crm-contact" class="dt-responsive">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table table-striped table-bordered full-data-table">
+                                                            <!-- [mfData]="data" #first1="mfDataTable"
+                                                            [mfRowsOnPage]="rowsOnPage1" [(mfSortBy)]="sortBy"
+                                                            [(mfSortOrder)]="sortOrder"> -->
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Order Date</th>
+                                                                    <th>Product Code</th>
+                                                                    <th>Product Name</th>
+                                                                    <th>Quantity</th>
+                                                                    <th>Amount</th>
+                                                                    <th>Order Status</th>
+                                                                    <th>Remarks</th>
+                                                                    <th>Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>22-11-2019</td>
+                                                                    <td>P_123</td>
+                                                                    <td>Chicken</td>
+                                                                    <td>100kg</td>
+                                                                    <td>$5000</td>
+                                                                    <td>Pending</td>
+                                                                    <td>Fresh</td>
+                                                                    <td> <a href="javascript:;"
+                                                                            class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                                                class="icofont icofont-ui-edit"
+                                                                                (click)="editOrder()"></i></a>
+                                                                        <a href="javascript:;"
+                                                                            class="crm-action-delete text-muted text-danger"><i
+                                                                                class="icofont icofont-delete-alt"></i></a>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <!-- <td colspan="10">
+                                                                <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator>
+                                                                <div *ngIf= "!data?.length" class="no-records">
+                                                            No records found!...
+                                                          </div>
+                                                            </td> -->
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card" *ngIf="showOrderedit == true">
+                                        <div class="card-header">
+                                            <h5>Edit Order</h5>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <form>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Order Date</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Order Date" value="22-11-2019">
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label">Product Code</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Product Code" value="P_123">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Product Name</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Product Name" value="Chicken">
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label">Quantity</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Quantity" value="100kg">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Amount</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Amount" value="$5000">
+
+                                                            </div>
+                                                            <label class="col-sm-2 col-form-label">Order Status</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Order Status" value="Pending">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group row">
+                                                            <label class="col-sm-2 col-form-label">Remarks</label>
+                                                            <div class="col-sm-4">
+                                                                <input type="text" class="form-control"
+                                                                    placeholder="Remarks" value="Fresh">
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-right">
+                                                            <button type="submit"
+                                                                class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Save</button>
+                                                            <button
+                                                                class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                                                                (click)="close1()">Close</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                        <ngb-tab>
+                            <ng-template ngbTabTitle><i class="icofont icofont-bag-alt"></i>Item Details </ng-template>
+                            <ng-template ngbTabContent>
+                                <div [@fadeInOutTranslate] class="m-t-5">
+                                    <div class="card"> </div>
+                                    <div class="card-body">
+                                        <div class="table-content crm-table">
+                                            <div class="project-table">
+                                                <div id="crm-contact" class="dt-responsive">
+                                                    <div class="table-responsive">
+                                                        <table
+                                                            class="table table-striped table-bordered full-data-table">
+                                                            <!-- [mfData]="data" #first1="mfDataTable"
+                                                            [mfRowsOnPage]="rowsOnPage1" [(mfSortBy)]="sortBy"
+                                                            [(mfSortOrder)]="sortOrder"> -->
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Product Code</th>
+                                                                    <th>Product Name</th>
+                                                                    <th>Order Status</th>
+                                                                    <th>Remarks</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>P_123</td>
+                                                                    <td>Chicken</td>
+                                                                    <td>Available</td>
+                                                                    <td>Fresh</td>
+                                                                </tr>
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <!-- <td colspan="10">
+                                                                <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator>
+                                                                <div *ngIf= "!data?.length" class="no-records">
+                                                            No records found!...
+                                                          </div>
+                                                            </td> -->
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </ngb-tab>
+                    </ngb-tabset>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="showadd == true && showdetails == false">
+    <div class="card">
+        <div class="card-header">
+            <h5>Add Vendor</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <form [formGroup]="vendorForm">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor type</label>
+                            <div class="col-sm-8">
+                                <select class="form-control form-control-default"
+                                    [(ngModel)]="addVendorData.vendorTypeName" formControlName="vendorTypeName"
+                                    name="select">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let vendor of vendorTypes" value={{vendor.vendorTypeName}}>
+                                        {{vendor.vendorTypeName}}</option>
+                                </select>
+                                <!-- <div *ngIf="submitted && f.vendorTypeName.errors" class="invalid-feedback">
+                            <div *ngIf="f.vendorTypeName.errors.required">Vendor type is required</div>
+                          </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="addVendorData.vendorName"
+                                    formControlName="vendorName" placeholder="Vendor name">
+                                <!-- <div *ngIf="submitted && f.vendorName.errors" class="invalid-feedback">
+                                <div *ngIf="f.vendorName.errors.required">Vendor type is required</div>
+                              </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Entity name</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="addVendorData.entityName"
+                                    formControlName="entityName" placeholder="Entity name">
+                                <!-- <div *ngIf="submitted && f.entityName.errors" class="invalid-feedback">
+                                  <div *ngIf="f.entityName.errors.required">Entity name is required</div>
+                                </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor priority</label>
+                            <div class="col-sm-8">
+                                <select class="form-control form-control-default"
+                                    [(ngModel)]="addVendorData.vendorPriorityName" formControlName="vendorPriorityName"
+                                    name="select">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let priority of vendorPriority"
+                                        value={{priority.vendorPriorityName}}>{{priority.vendorPriorityName}}</option>
+                                </select>
+                                <!-- <div *ngIf="submitted && f.vendorPriorityName.errors" class="invalid-feedback">
+                            <div *ngIf="f.vendorPriorityName.errors.required">Vendor priority is required</div>
+                          </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Address1</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="addVendorData.address1"
+                                    formControlName="address1" placeholder="Address1">
+                                <!-- <div *ngIf="submitted && f.address1.errors" class="invalid-feedback">
+                               <div *ngIf="f.address1.errors.required">Address1 is required</div>
+                             </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Address2</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="addVendorData.address2"
+                                    formControlName="address2" placeholder="Address2">
+                                <!-- <div *ngIf="submitted && f.address2.errors" class="invalid-feedback">
+                               <div *ngIf="f.address2.errors.required">Address2 is required</div>
+                             </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">landMark</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="addVendorData.landMark"
+                                    formControlName="landMark" placeholder="landMark">
+                                <!-- <div *ngIf="submitted && f.landMark.errors" class="invalid-feedback">
+                               <div *ngIf="f.landMark.errors.required">landMark is required</div>
+                             </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" style="font-size: 12px;">Mobile</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" [(ngModel)]="addVendorData.mobile"
+                                    onkeypress="return event.charCode >= 48" min="1" formControlName="mobile"
+                                    pattern="[6789][0-9]{9}" placeholder="Vendor MobileNo">
+                                <!-- <div *ngIf="submitted && f.mobile.errors" class="invalid-feedback">
+                               <div *ngIf="f.mobile.errors.required">Mobile no is required</div>
+                             </div> -->
+                            </div><label class="col-sm-2 col-form-label" style="font-size: 12px;">Pincode</label>
+                            <div class="col-sm-4">
+                                <input type="number" onkeypress="return event.charCode >= 48" min="1"
+                                    class="form-control" [(ngModel)]="addVendorData.pincode" formControlName="pincode"
+                                    placeholder="Pincode" maxlength="6" pattern="\d{6}">
+                                <!-- <div *ngIf="submitted && f.pincode.errors" class="invalid-feedback">
+                               <div *ngIf="f.pincode.errors.required">Pincode is required</div>
+                             </div> -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card user-card">
+                        <div class="top-cap-text">
+                            <h6>Product's List</h6>
+                            <div id='treeparent'>
+                                <ngx-treeview [config]="config" [items]="items"
+                                    (selectedChange)="onSelectedChange($event)">
+                                </ngx-treeview>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right">
+                <button type="submit" (click)="AddVendor(addVendorData)"
+                    class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Save</button>
+                <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                    (click)="close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="showedit == true && showdetails == false">
+    <div class="card">
+        <div class="card-header">
+            <h5>Edit Vendor</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-6">
+                    <form [formGroup]="vendorForm">
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor type</label>
+                            <div class="col-sm-8">
+                                <select name="select" class="form-control form-control-default"
+                                    [(ngModel)]="editvendordData.vendorTypeName" formControlName="vendorTypeName"
+                                    name="select">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let vendor of vendorTypes" value={{vendor.vendorTypeName}}>
+                                        {{vendor.vendorTypeName}}</option>
+                                </select>
+                                <!-- <div *ngIf="submitted && f.vendorTypeName.errors" class="invalid-feedback">
+                          <div *ngIf="f.vendorTypeName.errors.required">Vendor type is required</div>
+                        </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor name</label>
+                            <div class="col-sm-8">
+                                <input type="text" [(ngModel)]="editvendordData.vendorName" formControlName="vendorName"
+                                    class="form-control" placeholder="Vendor name">
+                                <!-- <div *ngIf="submitted && f.vendorName.errors" class="invalid-feedback">
+                      <div *ngIf="f.vendorName.errors.required">Vendor name is required</div>
+                    </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Entity name</label>
+                            <div class="col-sm-8">
+                                <input type="text" [(ngModel)]="editvendordData.entityName" formControlName="entityName"
+                                    class="form-control" placeholder="Entity name">
+                                <!-- <div *ngIf="submitted && f.entityName.errors" class="invalid-feedback">
+                      <div *ngIf="f.entityName.errors.required">Entity name is required</div>
+                    </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Vendor priority</label>
+                            <div class="col-sm-8">
+                                <select name="select" class="form-control form-control-default"
+                                    [(ngModel)]="editvendordData.vendorPriorityName"
+                                    formControlName="vendorPriorityName" name="select">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let priority of vendorPriority"
+                                        value={{priority.vendorPriorityName}}>{{priority.vendorPriorityName}}</option>
+                                </select>
+                                <!-- <div *ngIf="submitted && f.vendorPriorityName.errors" class="invalid-feedback">
+                      <div *ngIf="f.vendorPriorityName.errors.required">Vendor priority is required</div>
+                    </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Address1</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="editvendordData.address1"
+                                    formControlName="address1" placeholder="Address1">
+                                <!-- <div *ngIf="submitted && f.address1.errors" class="invalid-feedback">
+                       <div *ngIf="f.address1.errors.required">Address1 is required</div>
+                     </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">Address2</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="editvendordData.address2"
+                                    formControlName="address2" placeholder="Address2">
+                                <!-- <div *ngIf="submitted && f.address2.errors" class="invalid-feedback">
+                       <div *ngIf="f.address2.errors.required">Address2 is required</div>
+                     </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-4 col-form-label">landMark</label>
+                            <div class="col-sm-8">
+                                <input type="text" class="form-control" [(ngModel)]="editvendordData.landMark"
+                                    formControlName="landMark" placeholder="landMark">
+                                <!-- <div *ngIf="submitted && f.landMark.errors" class="invalid-feedback">
+                       <div *ngIf="f.landMark.errors.required">landMark is required</div>
+                     </div> -->
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 col-form-label" style="font-size: 12px;">Mobile</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" [(ngModel)]="editvendordData.mobile"
+                                    pattern="[6789][0-9]{9}" formControlName="mobile"
+                                    onkeypress="return event.charCode >= 48" min="1" placeholder="Vendor MobileNo">
+                                <!-- <div *ngIf="submitted && f.mobile.errors" class="invalid-feedback">
+                       <div *ngIf="f.mobile.errors.required">Mobile no is required</div>
+                     </div> -->
+                            </div>
+                            <label class="col-sm-2 col-form-label" style="font-size: 12px;">Pincode</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" [(ngModel)]="editvendordData.pincode"
+                                    formControlName="pincode" onkeypress="return event.charCode >= 48" min="1"
+                                    placeholder="Pincode" maxlength="6" pattern="\d{6}">
+                                <!-- <div *ngIf="submitted && f.pincode.errors" class="invalid-feedback">
+                       <div *ngIf="f.pincode.errors.required">Pincode is required</div>
+                     </div> -->
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-sm-6">
+                    <div class="card user-card">
+                        <div class="top-cap-text">
+                            <h6>Items</h6>
+                            <div id='treeparent'>
+                                <ngx-treeview [config]="config" [items]="items1"
+                                    (selectedChange)="onSelectedChange($event)">
+                                </ngx-treeview>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="text-right">
+                <button type="submit" (click)="vendorUpdateData(editvendordData)"
+                    class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Update</button>
+                <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                    (click)="close()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

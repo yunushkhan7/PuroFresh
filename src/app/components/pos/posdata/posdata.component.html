@@ -1,0 +1,139 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+  <div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+         <div class="row">
+          <div class="col-sm-12">
+            <h5 style="float:left">POS data</h5> 
+          </div>
+          </div>
+        </div> 
+        <div class="card-body">
+          <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+            <div class="project-table">
+            <div id="crm-contact" class="dt-responsive">
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                  <div>
+                    <label class="label-control">Show
+                      <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                      <option [ngValue]="10">10</option>
+                      <option [ngValue]="25">25</option>
+                      <option [ngValue]="50">50</option>
+                      <option [ngValue]="100">100</option>
+                      </select>
+                      entries
+                    </label>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6">
+                  <div style="text-align: right;">
+                    <label>Search:
+                      <input type="search" [(ngModel)]="filterQuery" class="form-control input-sm full-data-search" placeholder="search by any">
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div >
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered full-data-table" >
+                <!-- [mfData]="data | dataFilter: {saleId: filterQuery, createdDataTime: filterQuery,mobileNo: filterQuery, totalAmount: filterQuery}" #mf="mfDataTable"
+                  [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder"> -->
+                  <thead>
+                    <tr>
+                      <th>
+                        <!-- <mfDefaultSorter by="saleId"> -->
+                          Sale id
+                        <!-- </mfDefaultSorter> -->
+                      </th>
+                      <th>
+                        <!-- <mfDefaultSorter by="createdDataTime"> -->
+                          POS date
+                        <!-- </mfDefaultSorter> -->
+                      </th>
+                      <th>
+                        <!-- <mfDefaultSorter by="mobileNo"> -->
+                          Phone No.
+                        <!-- </mfDefaultSorter> -->
+                      </th>
+                      <th>
+                        <!-- <mfDefaultSorter by="totalAmount"> -->
+                          Total amount
+                        <!-- </mfDefaultSorter> -->
+                      </th>
+                        <th>
+                        <!-- <mfDefaultSorter> -->
+                          Action
+                        <!-- </mfDefaultSorter> -->
+                      </th> 
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let data of data">
+                      <td>{{data.saleId}}</td> 
+                      <td>{{data.createdDataTime}}</td>
+                      <td>{{data.mobileNo}}</td>
+                      <td>₹ {{data.totalAmount}}</td>
+                      <td class="action-icon">
+                        <a  href="javascript:;" data-toggle="modal" data-target="#viewdetails" (click)="editposdata(data)" class="crm-action-delete text-muted text-danger"><i
+                      class="icofont icofont-eye-alt"></i></a>
+                    </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="10">
+                        <!-- <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator> -->
+                        <div *ngIf= "!data?.length" class="no-records">
+                            No records found!...
+                          </div>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="modal" id="viewdetails">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">View Items</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        <div class="modal-body">
+          <table class="table table-striped table-bordered full-data-table" >
+            <thead>
+              <tr>
+                <th>Product name</th>
+                <th>Net weight</th>
+                <th>Amount</th>
+                <th>Quantity</th>
+                <th>Sub total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of editData">
+                <td>{{item.productName}}</td>
+                <td>{{item.netWeight}}{{item.measurementName}}</td>
+                <td>₹ {{item.prodAmount}}</td>
+                <td>{{item.prodQuantity}}</td>
+                <td>₹ {{item.prodSubTotal}}</td>
+              </tr>
+            </tbody>
+          </table>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      </div>
+    </div>
+  </div>

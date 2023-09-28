@@ -1,0 +1,395 @@
+<!-- Table page -->
+<div class="container-fluid" *ngIf="Editfran == false && Addfran == false && Addassign == false">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5 class="float1">Registration</h5>
+                </div>
+                <div class="col-sm-6">
+                    <!-- <button type="button" class="btn btn-secondary f-right" (click)="addassign()" style="margin-left: 12px; widows: 20px;">Assign-Product</button> -->
+                    <button type="button" class="btn btn-secondary f-right" (click)="add()" style="float: right;">Add
+                        Franchaise</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <div class="project-table">
+                    <div id="crm-contact" class="dt-responsive">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                <div>
+                                    <label class="label-control">Show
+                                        <select class="form-control input-sm full-data-show-entry"
+                                            (change)="onChange($event.target.value)">
+                                            <option [ngValue]="5">5</option>
+                                            <option [ngValue]="10">10</option>
+                                            <option [ngValue]="25">25</option>
+                                            <option [ngValue]="50">50</option>
+                                            <option [ngValue]="100">100</option>
+                                        </select>
+                                        entries
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div style="text-align: right;">
+                                    <label>Search:
+                                        <input type="search" [(ngModel)]="searchText" autocomplete="off"
+                                            class="form-control input-sm full-data-search" placeholder="search by any">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered full-data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Franchise Name  <i (click)="sort('franchaseName')" class="fa fa-sort"
+                                                    aria-hidden="true"></i></th>
+                                            <th>Franchise Contact  <i (click)="sort('contactNo')" class="fa fa-sort"
+                                                    aria-hidden="true"></i></th>
+                                            <th>Franchise Address  <i (click)="sort('address')" class="fa fa-sort"
+                                                    aria-hidden="true"></i> </th>
+                                            <th>Franchise Email  <i (click)="sort('email')" class="fa fa-sort"
+                                                    aria-hidden="true"></i></th>
+                                            <th>Action </th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody>
+                                        <tr
+                                            *ngFor="let franch of franchisedata | paginate: { itemsPerPage: pageno, currentPage: q } | filter: searchText | orderBy: key: !reverse">
+                                            <td>{{franch.franchaseName}}</td>
+                                            <td>{{franch.contactNo}}</td>
+                                            <td>{{franch.address}}</td>
+                                            <td>{{franch.email}}</td>
+                                            <td class="action-icon">
+                                                <a href="javascript:;"
+                                                    class="m-r-15 crm-action-edit text-muted text-primary">
+                                                    <i class="icofont icofont-ui-edit" data-toggle="modal"
+                                                        data-original-title="test" data-target="#exampleModal"
+                                                        (click)="edit(franch)"></i>
+                                                </a>
+                                                <a href="javascript:;" class="crm-action-delete text-muted text-danger">
+                                                    <i class="icofont icofont-delete-alt"
+                                                        (click)="deleteFran(franch.franchaseId)">
+                                                    </i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="10">
+                                                <div *ngIf="!franchisedata?.length" class="no-records">
+                                                    No records found!...
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                                <pagination-controls style="float: right" class="my-pagination"
+                                    (pageChange)="onPageChange($event)"></pagination-controls>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Fran -->
+<div class="container-fluid" *ngIf="Addfran == true">
+    <!-- Form -->
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h5>Add List</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Franchise name</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franName" class="form-control" placeholder="Franchise name"
+                            [(ngModel)]="addfrnch.franchaseName" style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franName.errors }" pattern="[a-zA-Z ]*">
+                        <div *ngIf="submitted && f.franName.errors" class="invalid-feedback">
+                            <div *ngIf="f.franName.errors.required">Franchise Name is required</div>
+                            <div *ngIf="f.franName.errors.pattern">numarics is not valid</div>
+                        </div>
+                    </div>
+                    <label class="col-sm-2 col-form-label">Franchise contact</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franContact" class="form-control"
+                            placeholder="Franchise contact" [(ngModel)]="addfrnch.contactNo"
+                            style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franContact.errors }" pattern="[0-9 ]*">
+                        <div *ngIf="submitted && f.franContact.errors" class="invalid-feedback">
+                            <div *ngIf="f.franContact.errors.required">Franchise Contact is required</div>
+                            <div
+                                *ngIf="f.franContact.errors.pattern || f.franContact.errors.minlength || f.franContact.errors.maxlength ">
+                                Enter Valid Phone number</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-4">
+                        <input type="email" formControlName="franEmail" [(ngModel)]="addfrnch.email"
+                            class="form-control" placeholder="Enter Email" style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franEmail.errors }">
+                        <div *ngIf="submitted && f.franEmail.errors" class="invalid-feedback">
+                            <div *ngIf="f.franEmail.errors.required">Franchise Email is required</div>
+                            <div *ngIf="f.franEmail.errors.email"> Enter Valid Email</div>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">Franchise Address</label>
+                    <div class="col-sm-4">
+                        <textarea type="number" formControlName="franAddress" [(ngModel)]="addfrnch.address"
+                            class="form-control" placeholder="Franchise address" style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franAddress.errors }"></textarea>
+                        <div *ngIf="submitted && f.franAddress.errors" class="invalid-feedback">
+                            <div *ngIf="f.franAddress.errors.required">Franchise Address required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">State</label>
+                    <div class="col-sm-4">
+                        <select class="custom-select" formControlName="franState" name="isActive"
+                            (change)="onStateChange($event.target.value)" class="form-control text-center"
+                            style="margin-left: -12%; width: 55%;">
+                            <option value="" selected>--Select--</option>
+                            <option *ngFor="let state of stateList" value="{{state.stateId}}">{{state.stateName}}
+                            </option>
+                        </select>
+                        <!-- <div class="invalid-feedback1">
+                            <div>error show</div>
+                        </div> -->
+                        <div *ngIf="submitted && f.franState.errors" class="invalid-feedback1">
+                            <div *ngIf="f.franState.errors.required">State required</div>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">District</label>
+                    <div class="col-sm-4">
+                        <select class="custom-select" formControlName="franDistrict" name="isActive"
+                            (change)="onDistrictChange($event.target.value)" class="form-control text-center"
+                            style="margin-left: -12%; width: 55%;">
+                            <option value="" selected>--Select--</option>
+                            <option *ngFor="let district of districtList" value="{{district.districtId}}">
+                                {{district.districtName}}</option>
+                        </select>
+                        <div *ngIf="submitted && f.franDistrict.errors" class="invalid-feedback1">
+                            <div *ngIf="f.franDistrict.errors.required">District required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Search Area</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franStreet" placeholder="Search here" list="browsers"
+                            class="form-control" (change)="pincodeListOnclick($event.target.value)"
+                            (keyup)="searchArea($event.target.value)" style="margin-left: -12%; width: 55%;">
+                        <datalist id="browsers">
+                            <option *ngFor="let area of areaList" value="{{area.areaName}}">
+                        </datalist>
+                        <div *ngIf="submitted && f.franStreet.errors" class="invalid-feedback1">
+                            <div *ngIf="f.franStreet.errors.required">Enter Division</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Area List -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered ">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;"> Area Name</th>
+                            <th style="text-align: center;"> Area Pincode </th>
+                            <th style="text-align: center;">Action </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let a of pincodeAreasList">
+                            <td style="text-align: center;">{{a.areaName}}</td>
+                            <td style="text-align: center;">{{a.pincode}}</td>
+                            <td style="text-align: center;">
+                                <i class="icofont icofont-delete-alt" data-toggle="modal" data-original-title="test"
+                                    data-target="#exampleModal" (click)="delete(a)"></i>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                (click)="InsertFranchase(addfrnch)">Save</button>
+            <button type="button" class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 d-inline-block"
+                (click)="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Fran -->
+<div class="container-fluid" *ngIf="Editfran == true">
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+        <div class="card">
+            <div class="card-header">
+                <h5>Edit List</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Franchise name</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franName" class="form-control" placeholder="Franchise name"
+                            [(ngModel)]="editRegistration.franchaseName" style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franName.errors }" pattern="[a-zA-Z ]*">
+                        <div *ngIf="submitted && f.franName.errors" class="invalid-feedback">
+                            <div *ngIf="f.franName.errors.required">Franchise Name is required</div>
+                            <div *ngIf="f.franName.errors.pattern">numarics is not valid</div>
+                        </div>
+                    </div>
+                    <label class="col-sm-2 col-form-label">Franchise contact</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franContact" class="form-control"
+                            placeholder="Franchise contact" [(ngModel)]="editRegistration.contactNo"
+                            style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franContact.errors }" pattern="[0-9 ]*">
+                        <div *ngIf="submitted && f.franContact.errors" class="invalid-feedback">
+                            <div *ngIf="f.franContact.errors.required">Franchise Contact is required</div>
+                            <div
+                                *ngIf="f.franContact.errors.pattern || f.franContact.errors.minlength || f.franContact.errors.maxlength ">
+                                Enter Valid Phone number</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Email</label>
+                    <div class="col-sm-4">
+                        <input type="email" formControlName="franEmail" [(ngModel)]="editRegistration.email"
+                            class="form-control" placeholder="Enter Email" style="margin-left: -12%; width: 55%;"
+                            [ngClass]="{ 'is-invalid': submitted && f.franEmail.errors }">
+
+                        <div *ngIf="submitted && f.franEmail.errors" class="invalid-feedback">
+                            <div *ngIf="f.franEmail.errors.required">Franchise Email is required</div>
+                            <div *ngIf="f.franEmail.errors.email"> Enter Valid Email</div>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">Franchise Address</label>
+                    <div class="col-sm-4">
+                        <textarea type="number" formControlName="franAddress" [(ngModel)]="editRegistration.address"
+                            class="form-control" placeholder="Franchise address" style="margin-left: -12%; width: 55%;"
+                            [(ngModel)]="editRegistration.address"
+                            [ngClass]="{ 'is-invalid': submitted && f.franAddress.errors }"></textarea>
+                        <div *ngIf="submitted && f.franAddress.errors" class="invalid-feedback">
+                            <div *ngIf="f.franAddress.errors.required">Franchise Address required</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">State</label>
+                    <div class="col-sm-4">
+                        <select class="custom-select" formControlName="franState" name="isActive"
+                            (change)="onStateChange($event.target.value)" class="form-control text-center"
+                            style="margin-left: -12%; width: 55%;">
+                            <option value="" selected>--Select--</option>
+                            <option *ngFor="let state of stateList" value="{{state.stateId}}">{{state.stateName}}
+                            </option>
+                        </select>
+                        <div *ngIf="submitted && f.franState.errors" class="invalid-feedback">
+                            <div *ngIf="f.franState.errors.required">State required</div>
+                        </div>
+                    </div>
+
+                    <label class="col-sm-2 col-form-label">District</label>
+                    <div class="col-sm-4">
+                        <select class="custom-select" formControlName="franDistrict" name="isActive"
+                            (change)="onDistrictChange($event.target.value)" class="form-control text-center"
+                            style="margin-left: -12%; width: 55%;">
+                            <option value="" selected>--Select--</option>
+                            <option *ngFor="let district of districtList" value="{{district.districtId}}">
+                                {{district.districtName}}</option>
+                        </select>
+                        <div *ngIf="submitted && f.franDistrict.errors" class="invalid-feedback">
+                            <div *ngIf="f.franDistrict.errors.required">District required</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Search</label>
+                    <div class="col-sm-4">
+                        <input type="text" formControlName="franStreet" placeholder="Search here" list="browsers"
+                            class="form-control" (change)="pincodeListOnclick($event.target.value)"
+                            (keyup)="searchArea($event.target.value)" style="margin-left: -12%; width: 55%;">
+                        <datalist id="browsers">
+                            <option *ngFor="let area of areaList" value="{{area.areaName}}">
+                        </datalist>
+                        <div *ngIf="submitted && f.franStreet.errors" class="invalid-feedback">
+                            <div *ngIf="f.franStreet.errors.required">Enter Division</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Area List -->
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped table-bordered ">
+                    <thead>
+                        <tr>
+                            <th style="text-align: center;">Area Name</th>
+                            <th style="text-align: center;">Area Pincode</th>
+                            <th style="text-align: center;"> Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let a of pincodeAreasList">
+                            <td style="text-align: center;">{{a.areaName}}</td>
+                            <td style="text-align: center;">{{a.pincode}}</td>
+                            <td style="text-align: center;"> <i class="icofont icofont-delete-alt" data-toggle="modal"
+                                    data-original-title="test" data-target="#exampleModal" (click)="delete(a)"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="text-right">
+            <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                (click)="updateRegistration(editRegistration)">Update</button>
+            <button type="button" class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 d-inline-block"
+                (click)="cancel()">Cancel</button>
+        </div>
+    </div>
+</div>

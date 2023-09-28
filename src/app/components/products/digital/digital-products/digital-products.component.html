@@ -1,0 +1,894 @@
+<!-- <app-spinner *ngIf="spinner == true"></app-spinner> -->
+
+<div class="container-fluid" *ngIf="editproductflag == false && addproductflag == false">
+    <div class="row">
+        <div class="col-sm-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <h5 class="float1">Product's List</h5>
+                        </div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-1"></div>
+                        <div class="col-sm-2">
+                            <div [hidden]="!chekUserType()">
+                                <select class="status form-control" (change)="onChangeFran($event.target.value)">
+                                    <option value="" selected>Select Franchaise</option>
+                                    <option *ngFor="let  fran of  franchise" value={{fran.franchaseId}}>
+                                        {{fran.franchaseName}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-2">
+                            <select class="status form-control" #product (change)="SelectStatus(product.value)">
+                                <option selected>Select</option>
+                                <option *ngFor="let product of products" value="{{product}}">{{product}}</option>
+                            </select>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <button type="button" class="btn btn-secondary f-right" data-toggle="modal"
+                                data-original-title="test" data-target="#exampleModal" (click)="AddproductFlag()">Add
+                                Product</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body">
+                    <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                        <!-- <ng2-smart-table [settings]="settings" [source]="digital_list"></ng2-smart-table>-->
+                        <div class="table-content crm-table">
+                            <div class="project-table">
+                                <div id="crm-contact" class="dt-responsive">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                            <div>
+                                                <label class="label-control">Show
+                                                    <select class="form-control input-sm full-data-show-entry"
+                                                        (change)="onChange($event.target.value)">
+                                                        <option [ngValue]="5">5</option>
+                                                        <option [ngValue]="10">10</option>
+                                                        <option [ngValue]="25">25</option>
+                                                        <option [ngValue]="50">50</option>
+                                                        <option [ngValue]="100">100</option>
+                                                    </select>
+                                                    entries
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div style="text-align: right;">
+                                                <label>Search:
+                                                    <input type="search" [(ngModel)]="searchText" autocomplete="off"
+                                                        class="form-control input-sm full-data-search"
+                                                        placeholder="search by any">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="panel-heading">User information</div>-->
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered full-data-table">
+                                                <!-- Important Plug in -->
+                                                <!-- [mfData]="data | dataFilter: {productName: filterQuery, categoryName: filterQuery, totalStock: filterQuery, discountAmount: filterQuery, netWeight: filterQuery, isActive: filterQuery}"> -->
+                                                <!-- #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder" -->
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <!-- <mfDefaultSorter by="image"> -->
+                                                            Image  <i (click)="sort('productImage')" class="fa fa-sort" aria-hidden="true"></i>
+                                                            <!-- </mfDefaultSorter> -->
+                                                        </th>
+                                                        <th>
+                                                            <!-- <mfDefaultSorter by="productName"> -->
+                                                            Product name <i (click)="sort('productName')" class="fa fa-sort" aria-hidden="true"></i>
+                                                            <!-- </mfDefaultSorter> -->
+                                                        </th>
+                                                        <!-- <th>
+                                                            <mfDefaultSorter by="actualAmount">Actual amount</mfDefaultSorter>
+                                                        </th>
+                                                        <th>
+                                                            <mfDefaultSorter by="discountAmount">Discount amount</mfDefaultSorter>
+                                                        </th> -->
+                                                        <th>
+                                                            <!-- <mfDefaultSorter by="categoryName"> -->
+                                                            Category name <i (click)="sort('categoryName')" class="fa fa-sort" aria-hidden="true"></i>
+                                                            <!-- </mfDefaultSorter> -->
+                                                        </th>
+                                                        <!-- <th>
+                                                            <mfDefaultSorter by="netWeight">Net weight</mfDefaultSorter>
+                                                        </th> -->
+                                                        <!-- <th>
+                                                            <mfDefaultSorter by="totalStock">Total stock</mfDefaultSorter>
+                                                        </th> -->
+                                                        <th>
+                                                            <!-- <mfDefaultSorter by="IsActive"> -->
+                                                            Status <i (click)="sort('isActive')" class="fa fa-sort" aria-hidden="true"></i>
+                                                            <!-- </mfDefaultSorter> -->
+                                                        </th>
+                                                        <th>
+                                                            <!-- <mfDefaultSorter> -->
+                                                            Action
+                                                            <!-- </mfDefaultSorter> -->
+                                                        </th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr
+                                                        *ngFor="let product of data | paginate: { itemsPerPage: pageno, currentPage: q } | filter: searchText | orderBy: key: !reverse">
+                                                        <td><img src="{{product.productImage}}" class='imgTable1'></td>
+                                                        <td>{{product.productName}}</td>
+                                                        <!-- <td>₹ {{product.actualAmount}}</td>
+                                                        <td>₹ {{product.discountAmount}}</td> -->
+                                                        <td>{{product.categoryName}}</td>
+                                                        <!-- <td>{{product.netWeight}}{{product.measurementName}}</td>
+                                                        <td>{{product.totalStock}}</td> -->
+
+
+                                                        <td *ngIf="product.isActive == true">Active</td>
+                                                        <td *ngIf="product.isActive == false">InActive</td>
+                                                        <td class="action-icon">
+                                                            <a href="javascript:;"
+                                                                class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                                    class="icofont icofont-ui-edit"
+                                                                    (click)="editproductfunction(product)"></i></a>
+                                                            <a href="javascript:;"
+                                                                class="m-r-15 crm-action-delete text-muted text-danger"><i
+                                                                    class="icofont icofont-delete-alt"
+                                                                    (click)="deleteProduct(product.fProductId)"></i></a>
+                                                            <a href="javascript:;"
+                                                                class="crm-action-delete text-muted text-success"
+                                                                data-toggle="modal"
+                                                                data-target=".bd-example-modal-lg"><i
+                                                                    class="icofont icofont-barcode"
+                                                                    (click)="generateBarcode(product)"></i></a>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="10" *ngIf="!data?.length">
+                                                            <!-- <mfBootstrapPaginator class="pagination-main f-right">
+                                                            </mfBootstrapPaginator> -->
+                                                            <div  class="no-records">
+                                                                No records found!...
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                            <pagination-controls style="float: right" class="my-pagination"
+                                                (pageChange)="onPageChange($event)"></pagination-controls>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- add product -->
+
+<div class="container-fluid" *ngIf="addproductflag == true">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h5 class="float1">Add Product</h5>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-secondary f-right" (click)="CloseProduct()">Back</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- <form [formGroup]="ProductAddForm"> -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product name</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" placeholder="Product name"
+                                [(ngModel)]="addproduct.productName">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product image</label>
+                        <div class="col-sm-4">
+                            <input type="file" [(fileModel)]="addproduct.productImage" alife-file-to-base64
+                                class="form-control" (change)="onChange1($event)" accept="image/x-png,image/jpeg"
+                                placeholder="Product image">
+                            <!-- <div class="error" *ngIf="imagemessage == true">*Uploaded image size should be in 350*327</div> -->
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Catagory</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" class="form-control" [(ngModel)]="addproduct.categoryId">
+                                <option value="">--Select--</option>
+                                <option *ngFor="let category of Allactivecategories" value={{category.categoryId}}>
+                                    {{category.categoryName}}</option>
+                            </select>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">Catagory</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" class="form-control" [(ngModel)]="addproduct.categoryId">
+                  <option value="">--Select--</option>
+                  <option *ngFor="let category of Allactivecategories" value={{category.categoryId}}>{{category.categoryName}}</option>
+              </select>
+                        </div> -->
+                        <!-- <label class="col-sm-2 col-form-label">Threshold</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" placeholder="Threshold" [(ngModel)]="addproduct.threshold">
+                        </div> -->
+                        <!-- <label class="col-sm-2 col-form-label">Quantity<sub>(in digits)</sub></label>
+            <div class="col-sm-4">
+              <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="addproduct.quantity" formControlName="quantity" placeholder="Quantity">
+            </div> -->
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Short description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" placeholder="Short description"
+                                [(ngModel)]="addproduct.shortDescription"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" placeholder="Product description"
+                                [(ngModel)]="addproduct.productDescription"></textarea>
+                        </div>
+                    </div>
+
+
+                    <h5 style="font-weight: 700;">Product details</h5>
+                    <hr>
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="addproduct.actualAmount" placeholder="Product price">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Sale price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="addproduct.discountAmount" placeholder="Sale price">
+                            <div *ngIf="pricemessage == true" class="error">Sale price should be less than or equal to product price</div>
+                        </div>
+                    </div> -->
+
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Delivery charge</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="addproduct.deliveryCharges" placeholder="Delivery charge">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product type</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="productType" [(ngModel)]="addproduct.productType"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option value="Perishable">Perishable </option>
+                                <option value="NotPerishable">Non Perishable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Lead days<sub>(in days)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="addproduct.leadDays" placeholder="Lead days">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Tax<sub>(%)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" [(ngModel)]="addproduct.tax" step='0.01'
+                                value='0.00' placeholder='0.00'>
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="isActive" [(ngModel)]="addproduct.isActive"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option [ngValue]="true">Active</option>
+                                <option [ngValue]="false">InActive</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Order Id</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="addproduct.orderNo" placeholder="Order number for display">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="isDiscount" [(ngModel)]="addproduct.isDiscount"
+                                [ngModelOptions]="{standalone: true}"> Apply Discount
+                        </div>
+                    </div>
+
+                    <input type="checkbox" name="test" [(ngModel)]="addproduct.newArrival"
+                        [checked]="currentlyChecked === check_box.newArrival" value="newArrival"
+                        (click)="selectCheckBoxnewarrival($event)" [ngModelOptions]="{standalone: true}"> New
+
+                    <input type="checkbox" name="test" [(ngModel)]="addproduct.trending"
+                        [checked]="currentlyChecked === check_box.trending" value="trending"
+                        (click)="selectCheckBoxtrending($event)" [ngModelOptions]="{standalone: true}"> Trending
+
+
+                    <hr>
+
+
+                    <div class="table-responsive">
+                        <form [formGroup]="orderForm">
+                            <table class="table table-stripped table-bordered full data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">
+                                            Quantity
+                                        </th>
+                                        <th style="text-align: center;">
+                                            Gross weight
+                                        </th>
+
+                                        <th style="text-align: center;">
+
+                                            Net weight
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Actual Price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Sales price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Measurement
+                                        </th>
+
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+
+
+                                <tbody formArrayName="items">
+                                    <tr *ngFor="let itemrow of orderForm.controls.items.controls; let i=index;let l=last"
+                                        [formGroupName]="i">
+
+                                        <td>
+                                            <input type="number" formControlName="quantity" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="grossWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="netWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="actualPrice" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="salePrice" class="form-control">
+                                        </td>
+                                        <td>
+
+                                            <select class="custom-select" formControlName="prodMeasurementId"
+                                                class="form-control">
+
+                                                <option value="">select</option>
+                                                <option *ngFor="let measurement of measuremntTypes"
+                                                    value="{{measurement.prodMeasurementId}}">
+                                                    {{measurement.measurementName}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button *ngIf="orderForm.controls.items.controls.length > 1"
+                                                (click)="deleteRow(i)" class="btn btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+
+
+
+                                </tbody>
+
+                            </table>
+                        </form>
+                        <div>
+                            <button class="btn btn-primary" (click)="addItem()"
+                                style="margin: 1px;float: right;">Add</button>
+
+                        </div>
+                    </div>
+
+
+                    <br>
+
+
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                            (click)="addnewProduct(addproduct)">Save</button>
+                        <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                            (click)="CloseProduct()">Close</button>
+                    </div>
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- edit product -->
+
+<div class="container-fluid" *ngIf="editproductflag == true">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-9">
+                    <h5 class="float1">Edit Product</h5>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-secondary f-right" (click)="CloseProduct()">Back</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <!-- <form [formGroup]="ProductUpdateForm"> -->
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product name</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" placeholder="product name"
+                                [(ngModel)]="editproduct.productName">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product image</label>
+                        <div class="col-sm-4">
+                            <input type="file" (change)="onChange1($event)" [(fileModel)]="editproduct.productImage"
+                                alife-file-to-base64 class="form-control" accept="image/x-png,image/jpeg"
+                                placeholder="product image">
+                            <!-- <div class="error" *ngIf="imagemessage == true">*Uploaded image size should be in 350*327</div> -->
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Catagory</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" class="form-control" [(ngModel)]="editproduct.categoryId">
+                                <option value="">--Select--</option>
+                                <option *ngFor="let category of Allactivecategories" value={{category.categoryId}}>
+                                    {{category.categoryName}}</option>
+                            </select>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">Quantity<sub>(in digits)</sub></label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.quantity" formControlName="quantity" placeholder="Quantity">
+                </div> -->
+                        <!-- <label class="col-sm-2 col-form-label">Total stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.totalStock" placeholder="Total stock">
+                        </div> -->
+                    </div>
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Balance stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.balance" placeholder="Total stock">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Ordered stock</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.orderPlaced" placeholder="Total stock">
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Threshold</label>
+                        <div class="col-sm-4">
+                            <input class="form-control" placeholder="Threshold" [(ngModel)]="editproduct.threshold">
+                        </div>
+                    </div> -->
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Short description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" [(ngModel)]="editproduct.shortDescription"
+                                placeholder="Short description"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <textarea class="form-control" [(ngModel)]="editproduct.productDescription"
+                                placeholder="Product description"></textarea>
+                        </div>
+                    </div>
+
+                    <h5 style="font-weight: 700;">Product details</h5>
+                    <hr>
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.actualAmount" placeholder="Product price">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Sale price</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.discountAmount" placeholder="Sale price">
+                            <div *ngIf="pricemessage == true" class="error">Sale price should be less than or equal to product price</div>
+                        </div>
+                    </div> -->
+
+                    <!-- <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Net wt</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.netWeight" placeholder="Net weight">
+
+                        </div>
+                        <label class="col-sm-2 col-form-label">Gross wt</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="editproduct.grossWeight" placeholder="Gross weight">
+                            <div *ngIf="weightmessage == true" class="error">Gross weight should be greater than Net weight</div>
+                        </div>
+                    </div> -->
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Delivery charge</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1"
+                                [(ngModel)]="editproduct.deliveryCharges" placeholder="Delivery charge">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Product type</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="productType" [(ngModel)]="editproduct.productType"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option value="Perishable">Perishable </option>
+                                <option value="NotPerishable">Non Perishable</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Lead days<sub>(in days)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="editproduct.leadDays" placeholder="Lead days">
+                        </div>
+                        <label class="col-sm-2 col-form-label">Tax<sub>(%)</sub></label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1"
+                                [(ngModel)]="editproduct.tax" step='0.01' value='0.00' placeholder='0.00'>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">LeadTime<sub>(in hrs)</sub></label>
+              <div class="col-sm-4">
+                <input type="number" class="form-control" min="1" [(ngModel)]="editproduct.leadTime" formControlName="leadTime" placeholder="Leadtime">
+                </div> -->
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Status</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="isActive" [(ngModel)]="editproduct.isActive"
+                                class="form-control">
+                                <option value="" selected>--Select--</option>
+                                <option [ngValue]="true">Active</option>
+                                <option [ngValue]="false">InActive</option>
+                            </select>
+                        </div>
+                        <!-- <label class="col-sm-2 col-form-label">Measurement</label>
+                        <div class="col-sm-4">
+                            <select class="custom-select" name="prodMeasurementId" [(ngModel)]="editproduct.prodMeasurementId" class="form-control">
+                <option value="" selected>--Select--</option>
+                <option *ngFor="let measurement of measuremntTypes" value={{measurement.prodMeasurementId}}>{{measurement.measurementName}}</option>
+              </select>
+                        </div> -->
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Order Id</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="0"
+                                [(ngModel)]="editproduct.orderNo" placeholder="Order number for display">
+                        </div>
+                        <div class="col-sm-6">
+                            <input type="checkbox" name="isDiscount" [(ngModel)]="editproduct.isDiscount"
+                                [ngModelOptions]="{standalone: true}"> Apply Discount
+                        </div>
+                    </div>
+
+                    <input type="checkbox" name="test" [(ngModel)]="editproduct.newArrival"
+                        (click)="selectCheckBoxnewarrival($event)" [ngModelOptions]="{standalone: true}"> New
+                    <input type="checkbox" name="test" [(ngModel)]="editproduct.trending"
+                        (click)="selectCheckBoxtrending($event)" [ngModelOptions]="{standalone: true}"> Trending
+
+
+                    <!-- <input type="checkbox" name="test" [(ngModel)]="editproduct.isDiscount" [checked]="currentlyChecked === check_box.isDiscount" (click)="selectCheckBox(check_box.isDiscount)" [ngModelOptions]="{standalone: true}"> Discount -->
+
+                    <!-- <input type="radio" value="newArrival" [(ngModel)]="editproduct.newArrival" formControlName="typeofproduct"> New
+            <input type="radio" value="trending" [(ngModel)]="editproduct.trending" formControlName="typeofproduct"> Trending
+            <input type="radio" value="isDiscount"  [(ngModel)]="editproduct.isDiscount" formControlName="typeofproduct"> Discount -->
+
+                    <!-- <div class="form-group row">
+              <div class="col-sm-5">
+              <label class="col-sm-2">New</label>
+                  <input [(ngModel)]="editproduct.newArrival"  formControlName="newArrival" type="checkbox"/>
+              <label class="col-sm-3">Trending</label>
+                <input [(ngModel)]="editproduct.trending" formControlName="trending" type="checkbox"/>
+                <label class="col-sm-3">Discount</label>
+                <input [(ngModel)]="editproduct.isDiscount" formControlName="isDiscount" type="checkbox"/>
+              </div>
+              <div class="col-sm-4">
+              </div>
+            </div> -->
+
+
+
+                    <div class="table-responsive">
+                        <form [formGroup]="orderForm">
+                            <table class="table table-stripped table-bordered full data-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;">
+                                            Quantity
+                                        </th>
+                                        <th style="text-align: center;">
+                                            Gross weight
+                                        </th>
+
+                                        <th style="text-align: center;">
+
+                                            Net weight
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Actual Price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Sales price
+                                        </th>
+                                        <th style="text-align: center;">
+
+                                            Measurement
+                                        </th>
+
+                                        <th>
+                                            Action
+                                        </th>
+                                    </tr>
+                                </thead>
+
+
+
+                                <tbody formArrayName="items">
+                                    <tr *ngFor="let itemrow of orderForm.controls.items.controls; let i=index;let l=last"
+                                        [formGroupName]="i">
+
+                                        <td>
+                                            <input type="number" formControlName="quantity" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="grossWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="text" formControlName="netWeight" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="actualPrice" class="form-control">
+                                        </td>
+                                        <td>
+                                            <input type="number" formControlName="salePrice" class="form-control">
+                                        </td>
+                                        <td>
+                                            <select class="custom-select" formControlName="prodMeasurementId"
+                                                class="form-control">
+
+                                                <option value="">select</option>
+                                                <option *ngFor="let measurement of measuremntTypes"
+                                                    value="{{measurement.prodMeasurementId}}">
+                                                    {{measurement.measurementName}}</option>
+                                            </select>
+                                        </td>
+                                        <td>
+                                            <button *ngIf="orderForm.controls.items.controls.length > 1"
+                                                (click)="deleteRow(i)" class="btn btn-danger">Delete</button>
+                                        </td>
+                                    </tr>
+
+
+
+                                </tbody>
+                            </table>
+                        </form>
+                        <div>
+                            <!-- <button class="btn btn-primary" (click)="addItem()" style="margin: 1px;float: right;">Add</button> -->
+
+                        </div>
+
+
+                    </div>
+
+
+                    <br>
+
+
+                    <div class="text-right">
+                        <!-- <button type="submit" [disabled]="!ProductUpdateForm.valid" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block" (click)="addexstingProduct(editproduct)">Add New</button> -->
+                        <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                            (click)="updateProduct(editproduct)">Update</button>
+                        <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                            (click)="CloseProduct()">Close</button>
+                    </div>
+                    <!-- </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true" *ngIf="viewflag == true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Print Barcodes: </h5>
+                <button type="button" class="close" (click)="closeModal()" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form [formGroup]="ProductUpdateForm">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Product name</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="product name" maxlength="35"
+                                        [(ngModel)]="barcodeproduct.productName"
+                                        (input)="onSearchChange($event.target.value)" formControlName="productName">
+                                </div>
+                                <label class="col-sm-2 col-form-label">Avaliable stock</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" onkeypress="return event.charCode >= 48"
+                                        min="1" [(ngModel)]="barcodeproduct.balance" formControlName="totalStock"
+                                        placeholder="Availabel stock" disabled>
+                                </div>
+                            </div>
+
+                            <div class="form-group row">
+                                <!-- <label class="col-sm-2 col-form-label">Net wt</label>
+                        <div class="col-sm-4">
+                            <input type="number" class="form-control" onkeypress="return event.charCode >= 48" min="1" [(ngModel)]="barcodeproduct.netWeight" formControlName="netWeight" placeholder="Net weight" disabled>
+                        </div> -->
+                                <label class="col-sm-2 col-form-label">Discount price</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" onkeypress="return event.charCode >= 48"
+                                        min="1" [(ngModel)]="barcodeproduct.discountAmount"
+                                        formControlName="discountAmount" placeholder="Discount price" disabled>
+                                </div>
+
+                                <label class="col-sm-2 col-form-label">No.of Barcodes</label>
+                                <div class="col-sm-4">
+                                    <input type="number" class="form-control" onkeypress="return event.charCode >= 48"
+                                        min="1" [(ngModel)]="barcode" name="barcode"
+                                        [ngModelOptions]="{standalone: true}" placeholder="No.of Barcodes to print">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Packed Date</label>
+                                <div class="col-sm-4">
+                                    <input type="text" class="form-control" placeholder="Packed Date"
+                                        [(ngModel)]="packedDate" name="packedDate"
+                                        [ngModelOptions]="{standalone: true}">
+                                </div>
+                            </div>
+                        </form>
+                        <div fxLayout="column">
+                            <!-- <div fxLayout="column">
+                      <textarea  placeholder="bc-value" [(ngModel)]="value"></textarea>
+                      <br/>
+                    </div> -->
+                            <div fxLayout="column" style="text-align: center;">
+                                <ngx-barcode *ngFor="let bcValue of values" [bc-element-type]="elementType"
+                                    [bc-value]="bcValue" [bc-format]="format" [bc-line-color]="lineColor"
+                                    [bc-width]="barwidth" [bc-height]="barheight" [bc-display-value]="displayValue"
+                                    [bc-font-options]="fontOptions" [bc-font]="font" [bc-text-align]="textAlign"
+                                    [bc-text-position]="textPosition" [bc-text-margin]="textMargin"
+                                    [bc-font-size]="fontSize" [bc-background]="background" [bc-margin]="margin"
+                                    [bc-margin-top]="marginTop" [bc-margin-bottom]="marginBottom"
+                                    [bc-margin-left]="marginLeft" [bc-margin-right]="marginRight"></ngx-barcode>
+                                <label>{{barcodeproduct.productName}}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal"
+                        (click)="closeModal()">Close</button>
+                    <button type="button" class="btn btn-primary" *ngIf="printBarcodeBtnFlag == false"
+                        (click)="printBarcode(barcode, barcodeproduct.productName)">Print Barcode</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Invoice Detail-->
+
+<div class="modal" id="myModal2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="contentToConvert" style="height: auto">
+            <!-- <div class="modal-header">
+          <h4 class="modal-title">Invoice</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div> -->
+            <div class="modal-body invoice print" style="width: 2in;height: 1in;">
+                <div *ngFor="let barcode of barcodes">
+                    <div style="text-align: center; margin-top: -15px;">
+                        <ngx-barcode [bc-value]="barcodeproduct.code" [bc-display-value]="false" [bc-width]="barwidth"
+                            [bc-height]="barheight"></ngx-barcode>
+                        <div style="text-align: center;">
+                            <label
+                                style="font-size: 8px;font-family: 'Times New Roman', Times, serif; font-weight: bold;position: relative; bottom: 8px;">{{barcodeproduct.productName}}</label>
+                        </div>
+                    </div>
+
+                    <!-- <div class="row"> 
+                
+              </div> -->
+
+                    <div class="row">
+                        <div class="form-group" style="display: flex;">
+                            <div
+                                style="font-size: 8px;width: 80px;font-family: 'Ubuntu', sans-serif; position: relative; bottom: 7px;">
+                                Nt Wt:<span>{{barcodeproduct.netWeight}}{{barcodeproduct.measurementName}}</span></div>
+                            <div
+                                style="font-size: 8px;font-family: 'Ubuntu', sans-serif;position: relative; bottom: 7px;">
+                                Pkd:<span>{{packedDate}}</span></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group" style="display: flex;">
+                            <div
+                                style="font-size: 8px; width: 100px;font-family: 'Ubuntu', sans-serif;position: relative; bottom: 7px;">
+                                MRP:₹<span>{{barcodeproduct.actualAmount}}</span></div>
+                            <div
+                                style="font-size: 8px; font-family: 'Ubuntu', sans-serif;margin-left: -20px; position: relative; bottom: 7px;">
+                                PSP:₹<span>{{barcodeproduct.discountAmount}}</span></div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

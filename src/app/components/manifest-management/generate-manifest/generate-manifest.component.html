@@ -1,0 +1,738 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+<div class="container-fluid" *ngIf="addflag == false && editflag == false">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-6">
+                    <h5 style="float:left">Manifest List</h5>
+                </div>
+                <div class="col-sm-2">
+                    <select class="status form-control" #status (change)="ManifestStatusData(status.value)">
+                        <option value="" selected>Select</option>
+                        <option *ngFor="let status of manifeststatus" value="{{status.manifestStatusCode}}">
+                            {{status.manifestStatusData}}</option>
+                    </select>
+                </div>
+                <div class="col-sm-1">
+                    <button type="button" title="Refresh" class="btn btn-primary f-right" (click)="Getmanifests()"><i
+                            class="fa fa-refresh"></i></button>
+                </div>
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-secondary f-right"
+                        (click)="GenerateManifestAddflag()">GenerateManifest</button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <div class="project-table">
+                    <div id="crm-contact" class="dt-responsive">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                <div>
+                                    <label class="label-control">Show
+                                        <select class="form-control input-sm full-data-show-entry"
+                                            [(ngModel)]="rowsOnPage">
+                                            <option [ngValue]="10">10</option>
+                                            <option [ngValue]="25">25</option>
+                                            <option [ngValue]="50">50</option>
+                                            <option [ngValue]="100">100</option>
+                                        </select>
+                                        entries
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div style="text-align: right;">
+                                    <label>Search:
+                                        <input type="search" [(ngModel)]="filterQuery"
+                                            class="form-control input-sm full-data-search" placeholder="search by any">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="panel-heading">User information</div>-->
+                        <div>
+                            <div class="table-responsive">
+                                <table class="table table-striped table-bordered full-data-table"
+                                    [mfData]="manifestData | dataFilter: {runSheetId: filterQuery, createdDateTime: filterQuery, startTime: filterQuery, endTime: filterQuery, deilveryBoyName: filterQuery, pincode: filterQuery, manifestStatus: filterQuery}"
+                                    #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy"
+                                    [(mfSortOrder)]="sortOrder">
+                                    <thead>
+                                        <tr>
+                                            <!-- <th>
+                    <mfDefaultSorter by="slno">sl.no</mfDefaultSorter>
+                  </th> -->
+                                            <th>
+                                                <mfDefaultSorter by="runSheetId">RS-no</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="createdDateTime">Manifest date</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="startTime">Slot timings</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="deilveryBoyName">Delivery boy</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="failed">Fld/png</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="completed">Cmd/ttl</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="pincode">Pincode</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter by="manifestStatusCode">Status</mfDefaultSorter>
+                                            </th>
+                                            <th>
+                                                <mfDefaultSorter>Action</mfDefaultSorter>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let manifest of mf.data">
+                                            <!-- <td>{{i + 1}}</td> -->
+                                            <td>{{manifest.runSheetId}}</td>
+                                            <td>{{manifest.createdDateTime}}</td>
+                                            <td>{{manifest.startTime}} - {{manifest.endTime}}</td>
+                                            <td>{{manifest.deilveryBoyName}} <a title="Add Driver"
+                                                    *ngIf="manifest.manifestStatusCode == 'NS'" href="javascript:;"
+                                                    class="crm-action-edit text-muted text-primary" data-toggle="modal"
+                                                    (click)="manifestdetails(manifest)" data-target="#myModal">(<i
+                                                        class="icofont icofont-ui-add"></i>)</a></td>
+                                            <td>{{manifest.failed}}/{{manifest.pending}}</td>
+                                            <td>{{manifest.completed}}/{{manifest.totalJobs}}</td>
+                                            <td>{{manifest.pincode}}</td>
+                                            <td>{{manifest.manifestStatus}}</td>
+                                            <td class="action-icon">
+                                                <a title="Edit" *ngIf="manifest.manifestStatusCode == 'NS'"
+                                                    href="javascript:;"
+                                                    class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                        class="icofont icofont-ui-edit"
+                                                        (click)="editJobs(manifest)"></i></a>
+                                                <a title="Delete" *ngIf="manifest.manifestStatusCode == 'NS'"
+                                                    href="javascript:;" (click)="deleteManifest(manifest.manifestId)"
+                                                    class="m-r-15 crm-action-delete text-muted text-danger"><i
+                                                        class="icofont icofont-delete-alt"></i></a>
+                                                <a title="Complete Manifest" *ngIf="manifest.manifestStatusCode == 'IP'"
+                                                    href="javascript:;" (click)="completeManifest(manifest.manifestId)"
+                                                    class="m-r-15 crm-action text-muted text-success"><i
+                                                        class="icofont icofont-check-circled"></i></a>
+                                                <a title="View" href="javascript:;"
+                                                    *ngIf="manifest.manifestStatusCode == 'IP' || manifest.manifestStatusCode == 'CP'"
+                                                    data-toggle="modal" data-target="#viewcompltdjb"
+                                                    (click)="viewcompletedmanifest(manifest)"
+                                                    class="m-r-15 crm-action-delete text-muted text-danger"><i
+                                                        class="icofont icofont-eye-alt"></i></a>
+                                                <!-- *ngIf="manifest.manifestStatusCode == 'CP'"  -->
+                                                <a *ngIf="manifest.manifestStatusCode == 'NS'" href="javascript:;"
+                                                    title="Print Invoice"
+                                                    class="m-r-15 crm-action-edit text-muted text-primary"><i
+                                                        class="icofont icofont-print"
+                                                        (click)="downloadpdf(manifest.manifestId)"></i></a>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="10">
+                                                <mfBootstrapPaginator class="pagination-main f-right">
+                                                </mfBootstrapPaginator>
+                                                <div *ngIf="!manifestData?.length" class="no-records">
+                                                    No records found!...
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="editflag == true">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h5 class="float1">Edit Manifest</h5>
+                </div>
+                <div class="col-sm-2"> <button type="button" class="btn btn-secondary f-right" data-toggle="modal"
+                        data-target="#addjobs">Add Jobs</button></div>
+                <div class="col-sm-2"> <button type="button" class="btn btn-secondary f-right"
+                        (click)="back()">Back</button></div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                <div class="project-table">
+                    <div id="crm-contact" class="dt-responsive">
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                <label class="label-control">Show
+                                    <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                                        <option [ngValue]="10">10</option>
+                                        <option [ngValue]="25">25</option>
+                                        <option [ngValue]="50">50</option>
+                                        <option [ngValue]="100">100</option>
+                                    </select>
+                                    entries
+                                </label>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                                <div style="text-align: right;">
+                                    <label>Search:
+                                        <input type="search" [(ngModel)]="filterQuery"
+                                            class="form-control input-sm full-data-search" placeholder="search by any">
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="panel-heading">User information</div>-->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-bordered full-data-table"
+                                [mfData]="editManifestData | dataFilter: {subOrderId: filterQuery, pincode: filterQuery}"
+                                #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy"
+                                [(mfSortOrder)]="sortOrder">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <mfDefaultSorter by="slno">sl.no</mfDefaultSorter>
+                                        </th>
+                                        <th>
+                                            <mfDefaultSorter by="subOrderId">Sub order id</mfDefaultSorter>
+                                        </th>
+                                        <th>
+                                            <mfDefaultSorter by="pincode">Pin code</mfDefaultSorter>
+                                        </th>
+                                        <!-- <th>
+                    <mfDefaultSorter by="manifestStatusCode">Status</mfDefaultSorter>
+                  </th> -->
+                                        <th>
+                                            <mfDefaultSorter>Action</mfDefaultSorter>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr
+                                        *ngFor="let editorders of editManifestData | dataFilter: {subOrderId: filterQuery, pincode: filterQuery}; let i = index">
+                                        <td>{{i + 1}}</td>
+                                        <td>{{editorders.subOrderId}}</td>
+                                        <td>{{editorders.pincode}}</td>
+                                        <!-- <td>{{editorders.jobStatus}}</td> -->
+                                        <td class="action-icon">
+                                            <a title="Delete" href="javascript:;"
+                                                class="crm-action-delete text-muted text-danger"
+                                                (click)="deletejobs(editorders.orderInvoiceId)"><i
+                                                    class="icofont icofont-delete-alt"></i></a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="10">
+                                            <mfBootstrapPaginator class="pagination-main f-right">
+                                            </mfBootstrapPaginator>
+                                            <div *ngIf="!editManifestData.length" class="no-records">
+                                                No records found!...
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid" *ngIf="addflag == true">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="float1">Generate Manifest</h5>
+            <button type="button" class="btn btn-secondary f-right" (click)="back()">Back</button>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-sm-12">
+                    <form [formGroup]="manifestForm">
+                        <div class="form-group row">
+                            <label class="col-sm-2 pull-right">Delivery Boy</label>
+                            <div class="col-sm-4">
+                                <select class="custom-select form-control" formControlName="deliveryBoyId"
+                                    [(ngModel)]="selectNodes.deliveryBoyId">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let boy of deliveryboy" value={{boy.deliveryBoyId}}>{{boy.name}}
+                                    </option>
+                                </select>
+                            </div>
+
+                            <label class="col-sm-2 col-form-label">Select warehouse</label>
+                            <div class="col-sm-4">
+                                <select class="custom-select form-control" formControlName="wareHouseId"
+                                    (change)="enable()" [(ngModel)]="selectNodes.wareHouseId">
+                                    <option value="">--Select--</option>
+                                    <option *ngFor="let house of warehouses" value={{house.wareHouseId}}>
+                                        {{house.wareHouseName}}</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row" *ngIf="slotsEnable == true">
+                            <label class="col-sm-2 col-form-label">Select Slot</label>
+                            <div class="col-sm-4">
+                                <select class="custom-select" class="form-control" formControlName="slotId"
+                                    [(ngModel)]="selectNodes.slotId" (change)="sendData(selectNodes)">
+                                    <option value="" selected>--Select--</option>
+                                    <option *ngFor="let slots of allsots" value={{slots.slotId}}>{{slots.slotStartTime}}
+                                        - {{slots.slotEndTime}}</option>
+                                </select>
+                            </div>
+                            <label *ngIf="showPincodeFalg == true" class="col-sm-2 col-form-label">Select
+                                Pincode</label>
+                            <div class="col-sm-4" *ngIf="showPincodeFalg == true">
+                                <!-- <ng-multiselect-dropdown
+                    formControlName="pincode"
+                    [placeholder]="'Select pincodes'"
+                    [data]="Pincodes"
+                    [settings]="dropdownSettings"
+                    (onSelect)="onItemSelect($event)"
+                    (onSelectAll)="onSelectAll($event)"
+                    (onDeSelect)="onDeSelect($event)"
+                  ></ng-multiselect-dropdown> -->
+                                <select multiple class="custom-select form-control" formControlName="pincode" #pincode
+                                    [(ngModel)]="selectNodes.pincode">
+                                    <option value="">--Select--</option>
+                                    <option *ngFor="let pincode of Pincodes" value={{pincode.pincode}}>
+                                        {{pincode.pincode}} ({{pincode.ordersCount}})</option>
+                                </select>
+                            </div>
+                            <!-- <label class="col-sm-2 col-form-label">Select Area</label>
+          <div class="col-sm-4">
+            <select class="custom-select" class="form-control" formControlName="addressId" [(ngModel)]="selectNodes.addressId">
+              <option value="" selected>--Select--</option>
+              <option *ngFor="let area of areas" value={{area.addressId}}>{{area.area}}</option>
+            </select>
+        </div> -->
+                        </div>
+                        <div class="text-right">
+                            <!-- <button *ngIf="showPincodeFalg == false" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block" (click)="sendData(selectNodes)">Submit</button> -->
+                            <button *ngIf="showPincodeFalg == true"
+                                class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                                [disabled]="!manifestForm.valid"
+                                (click)="GenerateManifest(selectNodes.pincode)">Generate</button>
+                            <!-- <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="ResetData()">Reset</button> -->
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="showOrderList == true">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="float1">Order's list</h5>
+                </div>
+                <div class="card-body">
+                    <div id="batchDelete" class="category-table custom-datatable">
+                        <div class="table-content crm-table">
+                            <div class="project-table">
+                                <div id="crm-contact" class="dt-responsive">
+                                    <div class="row">
+                                        <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                                            <div>
+                                                <label class="label-control">Show
+                                                    <select class="form-control input-sm full-data-show-entry"
+                                                        [(ngModel)]="rowsOnPage">
+                                                        <option [ngValue]="10">10</option>
+                                                        <option [ngValue]="25">25</option>
+                                                        <option [ngValue]="50">50</option>
+                                                        <option [ngValue]="100">100</option>
+                                                    </select>
+                                                    entries
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-sm-12 col-md-6">
+                                            <div style="text-align: right;">
+                                                <label>Search:
+                                                    <input type="search" [(ngModel)]="filterQuery"
+                                                        class="form-control input-sm full-data-search"
+                                                        placeholder="Search name">
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- <div class="panel-heading">User information</div>-->
+                                    <div>
+                                        <div class="table-responsive">
+                                            <table class="table table-striped table-bordered full-data-table"
+                                                [mfData]="data | dataFilter: {subOrderId: filterQuery, deliveryBoyName: filterQuery, paymentType:filterQuery, customerName:filterQuery, slotEndtime:filterQuery, slotStartTime:filterQuery, grandTotal:filterQuery}"
+                                                #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy"
+                                                [(mfSortOrder)]="sortOrder">
+                                                <thead>
+                                                    <tr>
+                                                        <th>
+                                                            <input type="checkbox" [(ngModel)]="selectedAll"
+                                                                (change)="selectAll();"
+                                                                style="margin-bottom: 0px !important;    width: 20%;" />
+                                                        </th>
+                                                        <th>
+                                                            <mfDefaultSorter by="subOrderId">Sub order id
+                                                            </mfDefaultSorter>
+                                                        </th>
+                                                        <!-- <th>
+                          <mfDefaultSorter by="deliveryBoyName">Delivery boy name</mfDefaultSorter>
+                        </th>
+                        <th>
+                          <mfDefaultSorter by="paymentType">Payment type</mfDefaultSorter>
+                        </th>
+                        <th>
+                          <mfDefaultSorter by="customerName">Customer name</mfDefaultSorter>
+                        </th>
+                        <th>
+                          <mfDefaultSorter by="slotStartTime">Booked Slot</mfDefaultSorter>
+                        </th>
+                        <th>
+                          <mfDefaultSorter by="grandTotal">Grand total</mfDefaultSorter>
+                        </th> -->
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let order of mf.data">
+                                                        <td>
+                                                            <input type="checkbox" [(ngModel)]="order.selected"
+                                                                [checked]="order.selected"
+                                                                (change)="checkIfAllSelected(order.orderMasterId);"
+                                                                style="margin-bottom: 0px !important;width: 20%;" />
+                                                        </td>
+                                                        <td>{{order.subOrderId}}</td>
+                                                        <!-- <td>{{order.deliveryBoyName}}</td>
+                        <td>{{order.paymentType}}</td>
+                        <td>{{order.customerName}}</td>
+                        <td>{{order.slotStartTime}} - {{order.slotEndtime}}</td>
+                        <td>{{order.grandTotal}}</td> -->
+                                                    </tr>
+                                                </tbody>
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="10">
+                                                            <mfBootstrapPaginator class="pagination-main f-right">
+                                                            </mfBootstrapPaginator>
+                                                            <div *ngIf="!data?.length" class="no-records">
+                                                                No records found!...
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            </table>
+                                        </div>
+                                        <div class="text-right">
+                                            <button *ngIf="addflag == false"
+                                                class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                                                (click)="sendjobsData(data)">AddJobs</button>
+                                            <button *ngIf="addflag == true"
+                                                class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                                                (click)="sendmanifestdatas(data)">Create manifest</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container-fluid Ends-->
+
+<div class="modal" id="addjobs">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Select pincodes</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form [formGroup]="manifestForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <h5>Select Pincode</h5>
+                        <select multiple class="custom-select form-control" formControlName="pincode" #pincode
+                            [(ngModel)]="selectNodes.pincode">
+                            <option value="">--Select--</option>
+                            <option *ngFor="let pincode of Pincodes" value={{pincode.pincode}}>{{pincode.pincode}}
+                                ({{pincode.ordersCount}})</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="text-right">
+                            <button class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                                (click)="GenerateManifest(selectNodes.pincode)" data-dismiss="modal">Get Orders</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add delivery boy</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form #f="ngForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <h5>RS-no</h5>
+                        <br>
+                        <input type="text" name="runsheetId" [(ngModel)]="id.runsheetId" class="form-control" disabled>
+                        <br>
+                        <h5>Select the delivery boy</h5>
+                        <br>
+                        <select class="custom-select form-control" name="deliveryBoyId" [(ngModel)]="id.deliveryBoyId"
+                            (change)="driverbtn()">
+                            <option value="" selected>Select</option>
+                            <option *ngFor="let boy of deliveryboy" value={{boy.deliveryBoyId}}>{{boy.name}}</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="text-right">
+                        <button class="m-r-5 btn btn-primary" value="Submit" (click)="updateDrvier(id)"
+                            data-dismiss="modal" [disabled]="!driverupdatebtn">Update</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal"
+                            (click)="  closeMyModal()">Close</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="viewcompltdjb">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">View Orders</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered full-data-table">
+                    <thead>
+                        <tr>
+                            <th>Sub order id</th>
+                            <th>Pin code</th>
+                            <th>Customer name</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let item of completedData">
+                            <td>{{item.subOrderId}}</td>
+                            <td>{{item.pincode}}</td>
+                            <td>{{item.customerName}}</td>
+                            <td *ngIf="item.cancelReason != null">{{item.cancelReason}}</td>
+                            <td *ngIf="item.cancelReason == null">--Nil--</td>
+                            <td>{{item.jobStatus}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Invoice Detail-->
+
+<div class="modal" id="myModal2">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" id="contentToConvert" style="height: auto">
+            <!-- <div class="modal-header">
+          <h4 class="modal-title">Invoice</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div> -->
+            <div class="modal-body invoice print" style="padding: 1px; margin-bottom: 20px;"
+                *ngFor="let invoice of invoiceData">
+                <div style="font-family: Calibri; font-size: 20px; margin-bottom: 5px; margin-left: 40px;">
+                    <strong><i>{{invoice.enterPriseName.brandName}}</i></strong>
+                </div>
+                <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; margin-left: 3px;">
+                    <label>{{invoice.enterPriseName.branchName}}</label>
+                </div>
+                <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px;margin-top: 3px">
+                    <label style="margin-left: 8px; margin-right: 8px;">{{invoice.enterPriseName.address1}},
+                        {{invoice.address2}}</label>
+                    <label style="margin-left: 35px; margin-right: 35px;">{{invoice.enterPriseName.city}},
+                        {{invoice.enterPriseName.pincode}}</label>
+                </div>
+                <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px;margin-top: 3px;">
+                    <label style="margin-left: 15px; margin-right:15px;">GSTIN: {{invoice.enterPriseName.gstin}}</label>
+                </div>
+
+                <!-- Invoice Detail-->
+
+                <div class="text-center"
+                    style="font-family: Calibri; font-size: 12px; font-weight: 600;margin-bottom: 10px; margin-top: 10px;">
+                    <label style="margin-left: 65px; margin-right: 65px;"><u>Invoice</u></label>
+                </div>
+                <div style="margin-bottom: 5px;">
+                    <label style="font-family: Calibri; font-size: 12px;;"><strong>Delivery Slot :
+                        </strong>{{invoice.deliverySlot}}</label><br>
+                </div>
+                <div style="margin-bottom: 5px;"> <label style="font-family: Calibri; font-size: 12px;"><strong>Order No
+                            : </strong> {{invoice.subOrderId}}</label><br></div>
+                <div style="margin-bottom: 5px;"> <label style="font-family: Calibri; font-size: 12px;"><strong>Order
+                            Date : </strong> {{invoice.orderDate}}</label><br></div>
+                <div style="margin-bottom: 5px;"> <label style="font-family: Calibri; font-size: 12px;"><strong>Invoice
+                            No : </strong> {{invoice.orderInvoiceId}}</label><br></div>
+                <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;"><strong>Invoice
+                            Date : </strong> {{invoice.invoiceDate}}</label></div>
+
+                <!-- Customer Detail-->
+
+                <div class="text-center"
+                    style="font-family: Calibri; font-size: 12px; font-weight: 600;margin-bottom: 10px;margin-top: 10px;">
+                    <label style="margin-left: 38px; margin-right: 38px;"><u>Customer Details</u></label>
+                </div>
+                <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;"><strong>Name :
+                        </strong>{{invoice.firstName}} {{invoice.lastName}}</label><br></div>
+                <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;"><strong>Contact
+                            no :</strong> {{invoice.mobile}}</label><br></div>
+                <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;"><strong>Address :
+                        </strong> <span>{{invoice.location}}</span></label></div>
+
+                <!-- Product List-->
+
+                <div class="table-responsive changetable" style="margin-top: 6px;font-family: Calibri;
+          font-size: 12px;margin-bottom: -12px;">
+                    <table class="table table-bordered text-center"
+                        style="position: static; padding: 0px;font-size: 12px; height: auto; ">
+                        <thead>
+                            <tr>
+                                <th style="width: 55%;padding: 0px; border-left: none;text-align: center;">ITEM</th>
+                                <th style="width: 10%;padding: 0px;text-align: center;">QTY</th>
+                                <th style="width: 25%;padding: 0px;text-align: center;">WT</th>
+                                <th style="width: 10%;padding: 0px;border-right: none;text-align: right;">AMT</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table table-bordered text-center"
+                        style="position: static; padding: 0px;font-size: 12px; height: auto; ">
+                        <tbody>
+                            <tr *ngFor="let items of invoice.deliveryPList">
+                                <td
+                                    style="padding: 0px; border: none;text-align: left; width: 55%;  word-wrap:break-word;">
+                                    {{items.productName}}</td>
+                                <td style="padding: 0px; border: none;width: 10%;text-align: center;">
+                                    {{items.prodQuantity}}</td>
+                                <td style="padding: 0px; border: none;text-align: center;width: 25%">
+                                    {{items.netWeight}}{{items.measurementName}}</td>
+                                <td style="padding: 0px; border: none;text-align: right;width: 10%">
+                                    {{items.prodSubTotal}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Delivery Charges-->
+                <div style="margin-top: 20px;">
+                    <label style="font-family: Calibri; font-size: 12px;margin-bottom: 10px;width:100%"><strong>Delivery
+                            Charge </strong><span style=" float: right;">{{invoice.deliveryCharges}}</span></label><br>
+                </div>
+
+                <!-- Total Charges-->
+                <hr style="margin: 0px;">
+                <div style="margin-bottom: 5px;"><label
+                        style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Net Amount
+                            Rs. </strong><span style=" float: right;"> {{invoice.subTotal}}</span>
+                    </label><br></div>
+                <div style="margin-bottom: 5px;"><label
+                        style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Discount
+                            Rs. </strong><span style=" float: right;"> {{invoice.discountAllowed}}</span>
+                    </label><br></div>
+                <div style="margin-bottom: 5px;"><label
+                        style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Paid</strong><span
+                            style=" float: right;"> {{invoice.paid}}</span></label><br></div>
+                <div style="margin-bottom: 5px;"><label
+                        style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; width:100%"><strong>To be
+                            collected Rs. </strong><span style=" float: right;"> {{invoice.orderAmount}}</span>
+                    </label></div>
+
+                <!-- Tax Beakup Charges-->
+                <div class="text-center"
+                    style="font-family: Calibri; font-size: 12px; font-weight: 600;margin-bottom: 0px; margin-top: 10px;">
+                    <label
+                        style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; margin-left: 48px;margin-right: 48px;"><u>Tax
+                            Breakup</u></label>
+                </div>
+                <div class="table-responsive changetable" style="margin-top: 6px;font-family: Calibri;
+          font-size: 12px;margin-bottom: -12px;">
+                    <table class="table table-bordered text-center"
+                        style="table-layout: fixed; padding: 0px;font-size: 12px;width: 100%; ">
+                        <thead>
+                            <tr>
+                                <th style="width: 25%;padding: 0px; border: none;">Taxable Amt</th>
+                                <th style="width: 25%;padding: 0px; border: none;">CGST</th>
+                                <th style="width: 25%;padding-left: 3px; border: none">SGST</th>
+                                <th style="width: 25%;padding: 0px; border: none">Amt</th>
+                            </tr>
+                        </thead>
+                    </table>
+                    <table class="table table-bordered text-center"
+                        style="width: 100%;table-layout: fixed; padding: 0px;font-size: 12px; ">
+                        <tbody>
+                            <tr *ngFor="let tax of invoice.taxationList">
+                                <td style="width: 25%;padding: 0px; border: none; text-align: center;">{{tax.taxAmount}}
+                                </td>
+                                <td style="width: 25%;padding: 0px; border: none; text-align: center;">{{tax.cgst}}</td>
+                                <td style="width: 25%;padding: 0px; border: none;text-align: center;">{{tax.sgst}}</td>
+                                <td style="width: 25%;padding-left: 3px; border: none; text-align: center;">
+                                    {{tax.totalAmount}}</td>
+                            </tr>
+                            <!-- <tr>
+                  <td style="padding: 0px; border: none;text-align: center;">137.50</td>
+                  <td style="width: 25%;padding: 0px; border: none;text-align: center;">18.75</td>
+                  <td style="width: 25%;padding: 0px; border: none;text-align: center;">18.75</td>
+                  <td style="width: 25%;padding-left: 3px; border: none; text-align: center;">175.00</td>
+                </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+                <div style="margin-top: 20px;">
+                    <label style="font-family: Calibri;
+            font-size: 12px; margin-left: 35px;"><strong>"Saved" Rs. {{invoice.rupeesSaved}}</strong></label>
+                </div>
+            </div>
+            <!-- <div class="modal-footer">
+          <div class="text-right">
+            <button class="btn btn-primary" value="Submit" data-dismiss="modal" (click)="captureScreen()">Print</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div> -->
+        </div>
+    </div>
+</div>

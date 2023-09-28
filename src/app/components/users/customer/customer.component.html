@@ -1,0 +1,537 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="showdetails == false">
+  <div class="card">
+    <div class="card-header">
+      <h5>Customer's List</h5>
+    </div>
+    <div class="card-body">
+      <!--<div class="btn-popup pull-right">
+                <a class="btn btn-secondary" [routerLink]="'/users/create-user'">Create User</a>
+            </div>-->
+      <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+        <!-- <div class="table-responsive"> -->
+        <!-- <ng2-smart-table [settings]="settings" [source]="user_list"></ng2-smart-table> -->
+        <!-- </div> -->
+        <div class="project-table">
+          <div id="crm-contact" class="dt-responsive">
+            <div class="row">
+              <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                  <div>
+                      <label class="label-control">Show
+                          <select class="form-control input-sm full-data-show-entry"
+                              (change)="onChange($event.target.value)">
+                              <option [ngValue]="5">5</option>
+                              <option [ngValue]="10">10</option>
+                              <option [ngValue]="25">25</option>
+                              <option [ngValue]="50">50</option>
+                              <option [ngValue]="100">100</option>
+                          </select>
+                          entries
+                      </label>
+                  </div>
+              </div>
+              <div class="col-xs-12 col-sm-12 col-md-6">
+                  <div style="text-align: right;">
+                      <label>Search:
+                          <input type="search" [(ngModel)]="searchText" autocomplete="off"
+                              class="form-control input-sm full-data-search" placeholder="search by any">
+                      </label>
+                  </div>
+              </div>
+          </div>
+            <!-- <div class="panel-heading">User information</div>-->
+            <div>
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered full-data-table" >
+                <!-- [mfData]="data" #mf="mfDataTable"
+                  [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder" -->
+                  <thead>
+                    <tr>
+                      <th>
+                        <mfDefaultSorter by="firstName">First name </mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="lastName">Last name</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="email">Email</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="mobile">Mobile no</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter>Action</mfDefaultSorter>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      *ngFor="let customer of data | paginate: { itemsPerPage: pageno, currentPage: q } | filter: searchText | orderBy: key: !reverse">
+                      <td>{{customer.firstName}}</td>
+                      <td>{{customer.lastName}}</td>
+                      <td>{{customer.email}}</td>
+                      <td>{{customer.mobile}}</td>
+                      <td class="action-icon">
+                        <a href="javascript:;" class="m-r-15 crm-action-edit text-muted text-primary"
+                          (click)="viewcustomer(customer.customerId)"><i class="icofont icofont-eye-alt"></i></a>
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="10">
+                        <!-- <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator> -->
+                        <div *ngIf="!data?.length" class="no-records">
+                          No records found!...
+                        </div>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+                <pagination-controls style="float: right" class="my-pagination"
+                (pageChange)="onPageChange($event)"></pagination-controls>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container-fluid" *ngIf="showdetails == true">
+  <div class="card" style="margin-bottom: 0px;">
+    <div class="card-header">
+      <h5 class="float1">Customer Details</h5>
+      <button type="button" class="btn btn-secondary f-right" (click)="close()">Back</button>
+    </div>
+    <div class="row">
+      <div class="col-lg-12">
+        <ngb-tabset>
+
+          <ngb-tab>
+            <ng-template ngbTabTitle><i class="icofont icofont-ui-user"></i>Customer Details </ng-template>
+            <ng-template ngbTabContent>
+              <div class="card-body" style="min-height: 24rem;">
+                <div class="col-lg-12">
+                  <div class="row">
+                    <div class="table-editable col-lg-12 col-xl-12">
+                      <table class="table">
+                        <tr>
+                          <tbody>
+                            <tr>
+                              <th>Customer name</th>
+                              <td>{{customerDetails.customer.firstName}} {{customerDetails.customer.lastName}}</td>
+                            </tr>
+                            <tr>
+                              <th>Mobile no</th>
+                              <td>{{customerDetails.customer.mobile}}</td>
+                            </tr>
+                            <tr>
+                              <th>Email id</th>
+                              <td>{{customerDetails.customer.email}}</td>
+                            </tr>
+                          </tbody>
+                        </tr>
+                      </table>
+                    </div>
+                    <!-- <div>
+                    <h4 style="text-align: center;">Saved Address</h4>
+                  </div> -->
+                    <div class="col-lg-4 col-md-4 col-xs-12" *ngFor="let address of customerAddress;">
+                      <div class="details" style="border: 1px solid darkred; border-radius: 8px;
+                    margin-bottom: 10px; padding: 5px;">
+                        <div style="margin-top: 10px;">
+                          <label>{{address.firstName}} {{address.lastName}}</label>
+                        </div>
+                        <div>
+                          <label style="min-height: 3.8rem;"> {{address.location}}</label>
+                        </div>
+                        <div>
+                          <label> {{address.city}}</label>
+                        </div>
+                        <div>
+                          <label>{{address.area}}, {{address.landMark}}</label>
+                        </div>
+                        <div>
+                          <label>{{address.pincode}}, {{address.mobile}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab>
+            <ng-template ngbTabTitle><i class="icofont icofont-history" (click)="GetAllordersByCus()"></i>Order
+              History</ng-template>
+            <ng-template ngbTabContent>
+              <div [@fadeInOutTranslate]>
+                <div class="card-body">
+                  <div class="table-content crm-table">
+                    <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                      <div class="project-table">
+                        <div id="crm-contact" class="dt-responsive">
+                          <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                              <div>
+                                <label class="label-control">
+                                  Show
+                                  <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                                    <option [ngValue]="10">10</option>
+                                    <option [ngValue]="25">25</option>
+                                    <option [ngValue]="50">50</option>
+                                    <option [ngValue]="100">100</option>
+                                  </select>
+                                  entries
+                                </label>
+                              </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                              <div style="text-align: right;">
+                                <label>
+                                  Search:
+                                  <input type="search" [(ngModel)]="filterQuery"
+                                    class="form-control input-sm full-data-search" placeholder="search name">
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table table-striped table-bordered full-data-table"
+                              [mfData]="orderHistory  | dataFilter : {subOrderId: filterQuery, createdDate: filterQuery, slotDate: filterQuery, slotTime: filterQuery, deliveryDate: filterQuery, orderAmount: filterQuery, orderStatus: filterQuery}"
+                              #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy"
+                              [(mfSortOrder)]="sortOrder">
+                              <thead>
+                                <tr>
+                                  <th>
+                                    <mfDefaultSorter by="subOrderId">Order id</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="createdDate">Ordered date</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="slotDate">Delivery date</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="slotTime">Slot time</mfDefaultSorter>
+                                  </th>
+                                  <!-- <th>
+                                <mfDefaultSorter by="paymentType">Payment type</mfDefaultSorter>
+                              </th> -->
+                                  <th>
+                                    <mfDefaultSorter by="orderAmount">Total amount</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="orderStatus">Status</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter>Action</mfDefaultSorter>
+                                  </th>
+                                </tr>
+                                <tr></tr>
+                              </thead>
+                              <tbody>
+                                <tr *ngFor="let item of mf.data">
+                                  <td>{{item.subOrderId}}</td>
+                                  <td>{{item.createdDate}}</td>
+                                  <td>{{item.slotDate}}</td>
+                                  <td>{{item.slotTime}}</td>
+                                  <!-- <td>{{item.paymentType}}</td> -->
+                                  <td>₹ {{item.orderAmount}}</td>
+                                  <td *ngIf="item.orderStatus == 'CONFIRMED'"><span
+                                      class="badge badge-primary">{{item.orderStatus}}</span></td>
+                                  <td *ngIf="item.orderStatus == 'IN PROGRESS'"><span
+                                      class="badge badge-warning">{{item.orderStatus}}</span></td>
+                                  <td *ngIf="item.orderStatus == 'IN TRANSIT'"><span
+                                      class="badge badge-info">{{item.orderStatus}}</span></td>
+                                  <td *ngIf="item.orderStatus == 'DELIVERED'"><span
+                                      class="badge badge-success">{{item.orderStatus}}</span></td>
+                                  <td *ngIf="item.orderStatus == 'CANCELLED'"><span
+                                      class="badge badge-danger">{{item.orderStatus}}</span></td>
+                                  <td class="action-icon">
+                                    <a href="javascript:;" title="View" (click)="viewOrderData(item.orderInvoiceId)"
+                                      class="m-r-15 crm-action-edit text-muted text-primary" data-toggle="modal"
+                                      data-target=".bd-example-modal-lg"><i class="icofont icofont-open-eye"></i></a>
+                                    <a href="javascript:;"
+                                      *ngIf="item.orderStatus != 'DELIVERED' && item.orderStatus != 'CANCELLED'"
+                                      title="Cancelled Order" (click)="cancelledOrder(item.orderInvoiceId)"
+                                      class="crm-action-edit text-muted text-danger"><i
+                                        class="icofont icofont-close"></i></a>
+                                  </td>
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <td colspan="10">
+                                    <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator>
+                                    <div *ngIf="!orderHistory?.length" class="no-records">
+                                      No records found!...
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+
+          <ngb-tab>
+            <ng-template ngbTabTitle><i class="icofont icofont-bag-alt"></i>Transaction History </ng-template>
+            <ng-template ngbTabContent>
+              <div [@fadeInOutTranslate]>
+                <div class="card-body">
+                  <div class="table-content crm-table">
+                    <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+                      <div class="project-table">
+                        <div id="crm-contact" class="dt-responsive">
+                          <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                              <div>
+                                <label class="label-control">
+                                  Show
+                                  <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                                    <option [ngValue]="10">10</option>
+                                    <option [ngValue]="25">25</option>
+                                    <option [ngValue]="50">50</option>
+                                    <option [ngValue]="100">100</option>
+                                  </select>
+                                  entries
+                                </label>
+                              </div>
+                            </div>
+                            <div class="col-xs-12 col-sm-12 col-md-6">
+                              <div style="text-align: right;">
+                                <label>
+                                  Search:
+                                  <input type="search" [(ngModel)]="filterQuery"
+                                    class="form-control input-sm full-data-search" placeholder="search name">
+                                </label>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="table-responsive">
+                            <table class="table table-striped table-bordered full-data-table" [mfData]="paymentHistory"
+                              #mf="mfDataTable" [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy"
+                              [(mfSortOrder)]="sortOrder">
+                              <thead>
+                                <tr>
+                                  <th>
+                                    <mfDefaultSorter by="orderId">Order id</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="createdDate">Payment date</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="transcationid">Transcation id</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="paymentmode">Payment mode</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="totalCost">Total amount</mfDefaultSorter>
+                                  </th>
+                                  <th>
+                                    <mfDefaultSorter by="status">Status</mfDefaultSorter>
+                                  </th>
+                                  <!-- <th>
+                                <mfDefaultSorter>Action</mfDefaultSorter>
+                              </th> -->
+                                </tr>
+                              </thead>
+                              <tbody>
+                                <tr
+                                  *ngFor="let item of mf.data  | dataFilter : {orderId: filterQuery, createdDateTime: filterQuery, transcationId: filterQuery, paymentType: filterQuery, amount: filterQuery, paymentStatus: filterQuery}">
+                                  <td>{{item.orderId}}</td>
+                                  <td>{{item.paymentDate}}</td>
+                                  <td *ngIf="item.transcationId != null">{{item.transcationId}}</td>
+                                  <td *ngIf="item.transcationId == null"> --- </td>
+                                  <td>{{item.paymentType}}</td>
+                                  <td>₹ {{item.amount}}</td>
+                                  <td>{{item.paymentStatus}}</td>
+                                  <!-- <td class="action-icon">
+                                <a href="javascript:;" class="crm-action-edit text-muted text-primary" (click)="orderdetails(item)" data-toggle="modal" data-target="#myModal"><i class="icofont icofont-open-eye"></i></a>
+                              </td> -->
+                                </tr>
+                              </tbody>
+                              <tfoot>
+                                <tr>
+                                  <td colspan="10">
+                                    <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator>
+                                    <div *ngIf="!paymentHistory?.length" class="no-records">
+                                      No records found!...
+                                    </div>
+                                  </td>
+                                </tr>
+                              </tfoot>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </ngb-tab>
+        </ngb-tabset>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+  aria-hidden="true" *ngIf="viewflag == true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Ordered Details: </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-sm-12">
+            <table class="table full-data-table">
+              <tbody>
+                <tr>
+                  <th scope="row" style="border-top:0">Order Id</th>
+                  <td style="border-top:0">#{{orderDetails.orderrport.subOrderId}}</td>
+                  <th scope="row" style="border-top:0">Total Amt</th>
+                  <td style="border-top:0" class="fa fa-inr"> {{orderDetails.orderrport.amount}}</td>
+                </tr>
+
+                <tr>
+                  <th scope="row" style="border-top:0">Delivery date</th>
+                  <td style="border-top:0">{{orderDetails.orderrport.slotDate}}
+                    {{orderDetails.orderrport.slotStartTime}} - {{orderDetails.orderrport.slotEndTime}}</td>
+                  <th scope="row" style="border-top:0">Order status</th>
+                  <td style="border-top:0" *ngIf="orderDetails.orderrport.orderStatus == 'CONFIRMED'"
+                    class="btn badge-primary"> {{orderDetails.orderrport.orderStatus}}</td>
+                  <td style="border-top:0" *ngIf="orderDetails.orderrport.orderStatus == 'IN PROGRESS'"
+                    class="btn btn-warning"> {{orderDetails.orderrport.orderStatus}}</td>
+                  <td style="border-top:0" *ngIf="orderDetails.orderrport.orderStatus == 'IN TRANSIT'"
+                    class="btn btn-info"> {{orderDetails.orderrport.orderStatus}}</td>
+
+                  <td style="border-top:0" *ngIf="orderDetails.orderrport.orderStatus == 'DELIVERED'"
+                    class="btn btn-success"> {{orderDetails.orderrport.orderStatus}}</td>
+                  <td style="border-top:0" *ngIf="orderDetails.orderrport.orderStatus == 'CANCELLED'"
+                    class="btn btn-danger"> {{orderDetails.orderrport.orderStatus}}</td>
+                  <!-- <th scope="row" style="border-top:0">Coupon Discount</th>
+                      <td style="border-top:0" class="fa fa-inr"> {{orderDetails.promotionAmount}}</td>  -->
+                </tr>
+
+                <tr>
+                  <th scope="row" style="border-top:0">Payment mode</th>
+                  <td style="border-top:0">{{orderDetails.paymentType}}</td>
+                  <th scope="row" style="border-top:0">Coupon Code</th>
+                  <td style="border-top:0" *ngIf="orderDetails.promotionCode != null">{{orderrport.promotionCode}}</td>
+                  <td style="border-top:0" *ngIf="orderDetails.promotionCode == null">No Code Applied</td>
+                  <!--   <th scope="row" style="border-top:0">After Discount Amt</th>
+                      <td style="border-top:0" class="fa fa-inr"> {{orderDetails.grandTotal}}</td> -->
+                </tr>
+
+                <tr>
+                  <th scope="row" style="border-top:0">Delivery Address</th>
+                  <td style="border-top:0; width: 50%;">{{orderDetails.address.firstName}}
+                    {{orderDetails.address.lastName}} {{orderDetails.address.location}} {{orderDetails.address.area}}
+                    {{orderDetails.address.landMark}} {{orderDetails.address.city}} {{orderDetails.address.pincode}}
+                    {{orderDetails.address.mobile}}.</td>
+
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!-- <div class="col-sm-3">
+                <div class="card" style="box-shadow: 0 -3px 11px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);">
+                  <div class="card-header" style="padding: 4px;border-bottom: 2px solid #0f369e;">
+                    <h5 class="modal-title">Order Progress</h5>
+                  </div>
+                  <div style="min-height: 12rem; margin-left: 10px; margin-top: 5px;margin-right: 10px;">
+                    <h6>{{orderDetails.orderStatus}}</h6>
+                    <h6 style="margin-top: -12px; border-bottom: 1px solid black;">23/01/2020 09:46 AM</h6>
+                  </div>
+                </div>
+              </div> -->
+        </div>
+        <table class="table table-striped table-bordered full-data-table text-center">
+          <thead>
+            <tr>
+              <!-- <th>Sub order id</th> -->
+              <th>Category name</th>
+              <th>Product name</th>
+              <th>Net weight</th>
+              <!-- <th>Actual price</th> -->
+              <th>Sale price</th>
+              <th>Quantity</th>
+              <th>Sub total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of orderDetails.orderrport.orderProductList">
+              <!-- <td>{{item.subOrderId}}</td> -->
+              <td>{{item.categoryName}}</td>
+              <td>{{item.productName}}</td>
+              <td>{{item.netWeight}}{{item.measurementName}}</td>
+              <!-- <td>₹ {{item.actualAmount}}</td> -->
+              <td>₹ {{item.prodAmount}}</td>
+              <td>{{item.prodQuantity}}</td>
+              <td>₹ {{item.prodSubTotal}}</td>
+            </tr>
+            <tr>
+              <!-- <td></td>
+                <td></td>
+                <td></td> -->
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Sub Total</td>
+              <td>₹ {{orderDetails.orderrport.orderAmount}}</td>
+            </tr>
+            <tr>
+              <!-- <td>Slot timings</td> -->
+              <!-- <td>{{item.slotDate}} {{item.slotStartTime}} - {{item.slotEndTime}}</td> -->
+              <!-- <td></td>
+                <td></td>
+                <td></td> -->
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Delivery charges</td>
+              <td>₹ {{orderDetails.orderrport.deliveryCharges}}</td>
+            </tr>
+            <tr>
+              <!-- <td></td>
+                <td></td>
+                <td></td> -->
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td>Grand total</td>
+              <td>₹ {{orderDetails.orderrport.amount}}</td>
+            </tr>
+            <br>
+          </tbody>
+        </table>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

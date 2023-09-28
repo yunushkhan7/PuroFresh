@@ -1,0 +1,382 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+  <div class="container-fluid" *ngIf="showcart == false">
+    <div class="card">
+        <div class="card-header">
+         <div class="row">
+          <div class="col-sm-12">
+            <h5 style="float:left">Point of sale</h5> 
+          </div>
+          </div>
+        </div> 
+        <div class="card-body" style="background-color: #6fda43a6; border: 2px solid #6fda43a6; padding-bottom: 10px; padding-top: 15px;" >
+          <div class="row" style="margin-bottom:10px;">
+            <div class="col-sm-3">
+              <input type="text" class="form-control" (keyup)="onKey($event)" placeholder="Pincode" [(ngModel)]="pincode">
+              <!-- <p>{{pincode}}</p> -->
+            </div>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" disabled="true"  placeholder="DeliveryCharges" [(ngModel)]="deliveryCharges">
+            </div>
+
+          </div>
+          <div class="row" style="margin-bottom: 10px;">
+            <div class="col-sm-3">
+              <input type="text" class="form-control" placeholder="Phone Number" [(ngModel)]="contact_num">
+            </div>
+            <div class="col-sm-3">
+              <select class="status form-control" [(ngModel)]="paymenttype"> 
+                <option value="" selected hidden>Payment Type</option>
+                <option *ngFor="let status of paymentarray" value="{{status.paymentModeCode}}">{{status.paymentModeName}}</option>
+              </select>
+          </div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control" placeholder="Address" [(ngModel)]="address">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 20px;">
+            <div class="col-sm-9">
+          <div class="input-group md-form form-sm form-1 pl-0" >
+            <div class="input-group-prepend">
+              <span class="input-group-text purple lighten-3" id="basic-text1"><i class="fa fa-search text-white" aria-hidden="true"></i></span>
+            </div>
+              <input class="form-control my-0 py-1" type="text" placeholder="search by product name" aria-label="Search" (input)="FetchItemsBarcode(searchcontent)" name="searchcontent" [(ngModel)]="searchcontent" #myInput autofocus>
+          </div>
+        </div>
+
+          <div class="col-sm-1">
+              <img src="assets/images/cart.png" style="padding: 4px;" alt="">
+              <label style="font-weight: 700; vertical-align: top; height: -28px; margin: -10px;
+              color: white; margin-top: -6px;">{{selecteditems.length}}</label>
+          </div>
+
+          <div class="col-sm-2">
+            <label title="Total cost" style="color: #fff; font-weight: 700;font-size: 28px; margin-bottom: 0px; cursor: pointer;"><i class="fa fa-inr"> {{totalamount}}</i></label>
+            <a title="View Cart" style="color: #fff; float: right; font-size: x-large;cursor: pointer;" (click)="viewcart()" *ngIf="disablearrow == true"><i class="fa fa-arrow-right"></i></a>
+          </div>
+          <div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body" style="border: 2px solid #6fda43a6;overflow-x: hidden; max-height: 480px;">
+      <div class="row" >
+        <section class="CommonsubWhiteBg" *ngIf="searchflagshow">
+          <ng-container *ngFor="let item of itemdetails;">
+              <article class="row" style="margin:10px;" style="cursor: pointer;"  (click)="selecteditem(item)">
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <a (click)="selecteditem(item)" style="cursor: pointer;">
+                    <img src="{{item.productImage}}" height="25">
+                    <span style="color: black;padding-left: 11px;">{{item.productName}} ({{item.netWeight}}{{item.measurementName}}) - (₹ {{item.discountAmount}}) - ({{ item.quantity}})</span>
+                    </a>
+                    <hr style="margin-bottom: 5px; margin-top: 5px;">
+                  </div>
+                  
+              </article>
+          </ng-container>
+          <!-- <ng-container *ngIf="!itemdetails" style="margin:0px;">
+              <article class="col-md-12">
+                  <h3>Loading data...</h3>
+              </article>
+          </ng-container> -->
+          <ng-container *ngIf="itemdetails.length == 0" 
+              class="ItemNotfoundArea row" style="margin:0px;">
+              <article class="col-md-12">
+                  <p>Item Not Found</p>
+              </article>
+          </ng-container>
+      </section>
+      <div class="table-content crm-table" style="width: 100%;">
+        <div class="project-table">
+          <div id="crm-contact" class="dt-responsive">
+        <div class="table-responsive">
+          <table class="table full-data-table text-center">
+            <thead>
+              <tr>
+                <th>Sl.no</th>
+                <th>Product image</th>
+                <th>Product name</th>
+                <th>Product weight</th>
+                <th>Product price</th>
+                <th>Quantity</th>
+                <th>Sub total</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let order of selecteditems; let i = index">
+                <td>{{i + 1}}</td>
+                <td><img src="{{order.productImage}}" style="width: 50px;
+                  height: 30px;
+              "></td>
+                <td>{{order.productName}}</td>
+                <td>{{order.netWeight}}{{order.measurementName}}</td>
+                <td><i class="fa fa-inr"> {{order.discountAmount}}</i></td>
+                <td><div class="container">
+                  <input type="button" (click)="decrementValue(order)" value="-" />
+                  <input type="text" name="counter" [(ngModel)]="order.counter" size="1" id="number" style="text-align: center;"/>
+                  <input type="button" (click)="incrementValue(order)" value="+" />
+                  </div>
+                </td>
+                <td><i class="fa fa-inr"> {{order.subtotal}}</i></td>
+                <td><a href="javascript:;" title="Remove item" class="fa fa-times" (click)="deleteitem(order)"></a></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="10">
+                  <div *ngIf= "!selecteditems?.length" class="no-records">
+                      No items selected!...
+                    </div>
+                </td>
+              </tr>
+            </tfoot>
+            </table>
+              </div>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <div class="container-fluid" *ngIf="showcheckout == true">
+    <div class="card">
+        <div class="card-header">
+          <div class="row">
+          <div class="col-sm-12">
+            <h5 style="float:left">Preview Details</h5> 
+          </div>  
+          </div>
+        </div>
+        <div class="card-body" style="background-color: #6fda43a6; border: 2px solid #6fda43a6; padding-bottom: 10px; padding-top: 15px;" >
+          <!-- <div class="row">
+            <div class="col-sm-4">
+              <label style="font-weight: 900;
+              vertical-align: middle;
+              padding-top: 10px;
+              color: white;">Phone No. : {{contact_num}}</label>
+            </div>
+            <div class="col-sm-8">
+              <label style="font-weight: 900;
+              vertical-align: middle;
+              padding-top: 10px;
+              color: white;">Address : {{address}}</label>
+            </div>
+
+          </div> -->
+          <div class="row">
+            <div class="col-sm-1">
+              <a title="Back" style="color: #fff; float: left; font-size: x-large; cursor: pointer;" (click)="backtoproducts()"><i class="fa fa-arrow-left"></i></a>
+         </div>
+         <div class="col-sm-3">
+          <label style="font-weight: 900;
+          vertical-align: middle;
+          padding-top: 10px;
+          color: white;" *ngIf="contact_num != ''">Phone No. : {{contact_num}}</label>
+        </div>
+          <div class="col-sm-1">
+              <img src="assets/images/cart.png" style="padding: 4px;" alt="">
+              <label style="font-weight: 700; vertical-align: top; height: -28px; margin: -10px;
+              color: white; margin-top: -6px;">{{selecteditems.length}}</label>
+          </div>
+          <div class="col-sm-3">
+            <label style="font-weight: 900;
+            vertical-align: middle;
+            padding-top: 10px;
+            color: white;">Payment Type : {{paymenttypename}}</label>
+        </div>
+
+          <div class="col-sm-2">
+            <label title="Total cost" style="color: #fff; font-weight: 700;font-size: 28px; margin-bottom: 0px; cursor: pointer;"><i class="fa fa-inr"> {{totalamount}}</i></label>
+           </div>
+
+           <div class="col-sm-1">
+            <a *ngIf="printagainflag == false" title="Print" style="color: #fff; float: right; font-size: x-large; cursor: pointer;" (click)="checkout()"><i class="icofont icofont-print"></i></a>
+            <a *ngIf="printagainflag == true" title="Print" style="color: #fff; float: right; font-size: x-large; cursor: pointer;" (click)="againprint()"><i class="icofont icofont-print"></i></a>
+           </div>
+
+           <div class="col-sm-1">
+            <a title="Point Of Sale"  style="color: #fff; float: right; font-size: x-large; cursor: pointer;" (click)="close()"><i class="fa fa-times"></i></a>
+           </div>
+          <div>
+           
+          </div>
+        </div>
+      </div>
+      <div class="card-body" style="border: 2px solid #6fda43a6;overflow-x: hidden; max-height: 560px;">
+        <div class="table-content crm-table" style="width: 100%;">
+          <div class="project-table">
+            <div id="crm-contact" class="dt-responsive">
+          <div class="table-responsive">
+            <table class="table full-data-table text-center" >
+              <thead>
+                <tr>
+                  <th>Sl.no</th>
+                  <th>Product image</th>
+                  <th>Product Name</th>
+                  <th>Product weight</th>
+                  <th>Product price</th>
+                  <th>Quantity</th>
+                  <th>Sub total</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let order of selecteditems; let i = index">
+                  <td>{{i + 1}}</td>
+                  <td><img src="{{order.productImage}}" style="width: 70px;
+                    height: 40px;
+                "></td>
+                  <td>{{order.productName}}</td>
+                  <td>{{order.netWeight}}{{order.measurementName}}</td>
+                  <td><i class="fa fa-inr"> {{order.discountAmount}}</i></td>
+                  <td>{{order.counter}}
+                  </td>
+                  <td><i class="fa fa-inr"> {{order.subtotal}}</i></td>
+                  <td><a title="Remove item" href="javascript:;" class="fa fa-times" (click)="deleteitem(order)"></a></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="10">
+                    <div *ngIf= "!selecteditems?.length" class="no-records">
+                        No items selected!...
+                      </div>
+                  </td>
+                </tr>
+              </tfoot>
+              </table>
+                </div>
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  </div>
+
+  <!-- Invoice Detail-->
+
+  <div class="modal" id="myModal2" *ngIf="printdisplayflag == true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content" id="contentToConvert" style="height: auto">
+        <!-- <div class="modal-header">
+          <h4 class="modal-title">Invoice</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div> -->
+        <div class="modal-body invoice print" style="padding: 1px; margin-bottom: 20px;">
+            <div style="font-family: Calibri; font-size: 20px; margin-bottom: 5px; margin-left: 40px;">
+              <strong><i>{{invoiceData.enterPriseName.brandName}}</i></strong>
+            </div>
+            <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; margin-left: 3px;">
+              <label >{{invoiceData.enterPriseName.branchName}}</label>
+            </div>
+            <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px;margin-top: 3px">
+              <label style="margin-left: 8px; margin-right: 8px;">{{invoiceData.enterPriseName.address1}}, {{invoiceData.address2}}</label>
+              <label style="margin-left: 35px; margin-right: 35px;">{{invoiceData.enterPriseName.city}}, {{invoiceData.enterPriseName.pincode}}</label>
+            </div>
+            <div style="font-family: Calibri; font-size: 12px;margin-bottom: 0px;margin-top: 3px;">
+              <label style="margin-left: 15px; margin-right:15px;">GSTIN: {{invoiceData.enterPriseName.gstin}}</label>
+            </div>
+
+           <!-- Invoice Detail-->
+            
+          <div class="text-center" style="font-family: Calibri; font-size: 12px; font-weight: 600;margin-bottom: 10px; margin-top: 10px;">
+            <label style="margin-left: 65px; margin-right: 65px;"><u>Invoice</u></label>
+          </div>
+          <!-- <div style="margin-bottom: 5px;">
+            <label  style="font-family: Calibri; font-size: 12px;;"><strong>Delivery Slot : </strong>{{invoiceData.deliverySlot}}</label><br>
+          </div>
+          <div style="margin-bottom: 5px;"> <label  style="font-family: Calibri; font-size: 12px;"><strong>Order No : </strong> {{invoiceData.subOrderId}}</label><br></div>
+          <div style="margin-bottom: 5px;">  <label  style="font-family: Calibri; font-size: 12px;"><strong>Order Date : </strong> {{invoiceData.orderDate}}</label><br></div> -->
+          <div style="margin-bottom: 5px;"> <label  style="font-family: Calibri; font-size: 12px;"><strong>Invoice No :  </strong> {{invoiceData.orderInvoiceId}}</label><br></div>
+          <div style="margin-bottom: 5px;"><label  style="font-family: Calibri; font-size: 12px;"><strong>Invoice Date : </strong> {{invoiceData.invoiceDate}}</label></div>
+          <div style="margin-bottom: 5px;"><label  style="font-family: Calibri; font-size: 12px;"><strong>Phone No. : </strong> {{contact_num_forprint}}</label></div>
+          <!-- Product List-->
+
+          <div class="table-responsive changetable" style="margin-top: 6px;font-family: Calibri;
+          font-size: 12px;margin-bottom: -12px;">
+          <table class="table table-bordered text-center" style="position: static; padding: 0px;font-size: 12px; height: auto; ">
+            <thead>
+              <tr>
+                <th style="width: 55%;padding: 0px; border-left: none;text-align: center;">ITEM</th>
+                <th style="width: 10%;padding: 0px;text-align: center;">QTY</th>
+                <th style="width: 25%;padding: 0px;text-align: center;">WT</th>
+                <th style="width: 10%;padding: 0px;border-right: none;text-align: right;">AMT</th>
+              </tr>
+            </thead>
+          </table>
+            <table class="table table-bordered text-center" style="position: static; padding: 0px;font-size: 12px; height: auto; ">
+              <tbody>
+                <tr *ngFor="let items of invoiceData.deliveryPList">
+                  <td style="padding: 0px; border: none;text-align: left; width: 55%;  word-wrap:break-word;">{{items.productName}}</td>
+                  <td style="padding: 0px; border: none;width: 10%;text-align: center;">{{items.prodQuantity}}</td>
+                  <td style="padding: 0px; border: none;text-align: center;width: 25%">{{items.netWeight}}{{items.measurementName}}</td>
+                  <td style="padding: 0px; border: none;text-align: right;width: 10%">{{items.prodSubTotal}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+           <!-- Delivery Charges-->
+           <div style="margin-top: 20px;">
+            <label  style="font-family: Calibri; font-size: 12px;margin-bottom: 10px;width:100%"><strong>Delivery Charge </strong><span style=" float: right;">{{invoiceData.deliveryCharges}}</span></label><br>
+          </div>
+
+          <!-- Total Charges-->
+          <hr style="margin: 0px;">
+          <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Net Amount Rs. </strong><span style=" float: right;">  {{invoiceData.orderAmount}}</span>
+          </label><br></div>
+          <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Payment Type </strong><span style=" float: right;">  {{paymenttypename}}</span>
+          </label><br></div>
+          <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;margin-bottom: 10px; width:100%"><strong>Paid</strong><span style=" float: right;">  {{invoiceData.paid}}</span></label><br></div>
+          <div style="margin-bottom: 5px;"><label style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; width:100%"><strong>To be collected Rs. </strong><span style=" float: right;">  {{invoiceData.orderAmount}}</span>
+          </label></div>
+
+          <!-- Tax Beakup Charges-->
+          <div class="text-center" style="font-family: Calibri; font-size: 12px; font-weight: 600;margin-bottom: 0px; margin-top: 10px;">
+            <label style="font-family: Calibri; font-size: 12px;margin-bottom: 0px; margin-left: 48px;margin-right: 48px;"><u>Tax Breakup</u></label>
+          </div>
+          <div class="table-responsive changetable" style="margin-top: 6px;font-family: Calibri;
+          font-size: 12px;margin-bottom: -12px;">
+           <table class="table table-bordered text-center" style="table-layout: fixed; padding: 0px;font-size: 12px;width: 100%; ">
+            <thead>
+              <tr>
+                <th style="width: 25%;padding: 0px; border: none;">Taxable Amt</th>
+                <th style="width: 25%;padding: 0px; border: none;">CGST</th>
+                <th style="width: 25%;padding-left: 3px; border: none">SGST</th>
+                <th style="width: 25%;padding: 0px; border: none">Amt</th>
+              </tr>
+            </thead>
+           </table>
+            <table class="table table-bordered text-center" style="width: 100%;table-layout: fixed; padding: 0px;font-size: 12px; ">
+              <tbody>
+                <tr *ngFor="let tax of invoiceData.taxationList">
+                  <td style="width: 25%;padding: 0px; border: none; text-align: center;">{{tax.taxAmount}}</td>
+                  <td style="width: 25%;padding: 0px; border: none; text-align: center;">{{tax.cgst}}</td>
+                  <td style="width: 25%;padding: 0px; border: none;text-align: center;">{{tax.sgst}}</td>
+                  <td style="width: 25%;padding-left: 3px; border: none; text-align: center;">{{tax.totalAmount}}</td>
+                </tr>
+                <!-- <tr>
+                  <td style="padding: 0px; border: none;text-align: center;">137.50</td>
+                  <td style="width: 25%;padding: 0px; border: none;text-align: center;">18.75</td>
+                  <td style="width: 25%;padding: 0px; border: none;text-align: center;">18.75</td>
+                  <td style="width: 25%;padding-left: 3px; border: none; text-align: center;">175.00</td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+          <div style="margin-top: 20px;">
+            <label style="font-family: Calibri;
+            font-size: 12px; margin-left: 35px;"><strong>"Saved" Rs. {{invoiceData.rupeesSaved}}</strong></label>
+          </div>
+         </div>
+        <!-- <div class="modal-footer">
+          <div class="text-right">
+            <button class="btn btn-primary" value="Submit" data-dismiss="modal" (click)="captureScreen()">Print</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div> -->
+      </div>
+    </div>
+  </div>

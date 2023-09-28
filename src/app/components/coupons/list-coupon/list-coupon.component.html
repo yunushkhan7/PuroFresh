@@ -1,0 +1,335 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+<!-- Container-fluid starts-->
+<div class="container-fluid" *ngIf="editcoupanflag == false && addcoupanflag == false">
+  <div class="row">
+    <div class="col-sm-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="float1">Coupon's List</h5>
+          <button type="button" class="btn btn-secondary f-right" data-toggle="modal" data-original-title="test"
+            data-target="#exampleModal" (click)="open()">Add Coupon</button>
+        </div>
+        <div class="card-body">
+          <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+            <div class="project-table">
+              <div id="crm-contact" class="dt-responsive">
+                <div class="row">
+                  <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                      <div>
+                          <label class="label-control">Show
+                              <select class="form-control input-sm full-data-show-entry"
+                                  (change)="onChange($event.target.value)">
+                                  <option [ngValue]="5">5</option>
+                                  <option [ngValue]="10">10</option>
+                                  <option [ngValue]="25">25</option>
+                                  <option [ngValue]="50">50</option>
+                                  <option [ngValue]="100">100</option>
+                              </select>
+                              entries
+                          </label>
+                      </div>
+                  </div>
+                  <div class="col-xs-12 col-sm-12 col-md-6">
+                      <div style="text-align: right;">
+                          <label>Search:
+                              <input type="search" [(ngModel)]="searchText" autocomplete="off"
+                                  class="form-control input-sm full-data-search" placeholder="search by any">
+                          </label>
+                      </div>
+                  </div>
+              </div>
+                <!-- <div class="panel-heading">User information</div>-->
+                <div>
+                  <div class="table-responsive">
+                    <table class="table table-striped table-bordered full-data-table">
+                      <!-- [mfData]="data | dataFilter: {promotionName: filterQuery, promotionType: filterQuery, promotionCode: filterQuery, promotionCount: filterQuery, promotionStartDate: filterQuery, promotionEndDate: filterQuery, promotionMinAmount: filterQuery}" #mf="mfDataTable"
+              [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder" -->
+                      <thead>
+                        <tr>
+                          <th>
+                            <mfDefaultSorter by="img">Image</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="title">Promo name</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionType">Promo type</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionCount">Promo count</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionCode">Promo code</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionAmount">Promo amount</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionMinAmount">Min amount</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionStartDate">Start date</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter by="promotionEndDate">End date</mfDefaultSorter>
+                          </th>
+                          <th>
+                            <mfDefaultSorter>Action</mfDefaultSorter>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let promotion of data | paginate: { itemsPerPage: pageno, currentPage: q } | filter: searchText | orderBy: key: !reverse">
+                          <td><img src="{{promotion.promotionImage}}" class="imgTable1"></td>
+                          <td>{{promotion.promotionName}}</td>
+                          <td>{{promotion.promotionType}}</td>
+                          <td>{{promotion.promotionCount}}</td>
+                          <td>{{promotion.promotionCode}}</td>
+                          <td>{{promotion.promotionAmount}}</td>
+                          <td>{{promotion.promotionMinAmount}}</td>
+                          <td>{{promotion.promotionStartDate | date:'d MMM, y, h:mm:ss a'}}</td>
+                          <td>{{promotion.promotionEndDate | date:'d MMM, y, h:mm:ss a' }}</td>
+                          <td class="action-icon">
+                            <a href="javascript:;" class="m-r-15 crm-action-edit text-muted text-primary"
+                              (click)="editcoupon(promotion)"><i class="icofont icofont-ui-edit"></i></a>
+                            <a href="javascript:;" class="crm-action-delete text-muted text-danger"
+                              (click)="deletecoupon(promotion.promotionId)"><i
+                                class="icofont icofont-delete-alt"></i></a>
+                          </td>
+                        </tr>
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colspan="10" *ngIf="!data?.length">
+                            <!-- <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator> -->
+                            <div  class="no-records">
+                              No records found!...
+                            </div>
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                    <pagination-controls style="float: right" class="my-pagination"
+                    (pageChange)="onPageChange($event)"></pagination-controls>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Container-fluid Ends-->
+<div class="container-fluid" *ngIf="addcoupanflag == true">
+  <div class="card">
+    <div class="card-header">
+      <h5>Add Coupon</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <form [formGroup]="CouponAddForm">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Promotion image</label>
+              <div class="col-sm-4">
+                <input type="file" #myImage (change)="onChange1($event)" class="form-control"
+                  placeholder="Promotion image" alife-file-to-base64 [(fileModel)]="addCouponData.promotionImage"
+                  formControlName="promotionImage" accept="image/x-png,image/jpeg">
+                <div class="error" *ngIf="imagemessage == true">*Uploaded image size should be in 498*291</div>
+              </div>
+              <label class="col-sm-2 col-form-label">Promotion name</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="promotionName" placeholder="Promotion name"
+                  [(ngModel)]="addCouponData.promotionName" formControlName="promotionName">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Promotion count</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionCount" placeholder="Promotion count" [(ngModel)]="addCouponData.promotionCount"
+                  formControlName="promotionCount">
+              </div>
+              <label class="col-sm-2 col-form-label">Promotion code</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" oninput="this.value = this.value.toUpperCase()"
+                  name="promotionCode" placeholder="Promotion code" [(ngModel)]="addCouponData.promotionCode"
+                  formControlName="promotionCode">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Coupon type</label>
+              <div class="col-sm-4">
+                <select name="select" class="form-control form-control-default"
+                  [(ngModel)]="addCouponData.promotionType" formControlName="promotionType">
+                  <option value="" selected>Select type</option>
+                  <option value="amount">Amount</option>
+                  <option value="percentage">Percentage</option>
+                </select>
+
+              </div>
+              <label class="col-sm-2 col-form-label">Promotion amount</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionAmount" placeholder="Promotion amount" [(ngModel)]="addCouponData.promotionAmount"
+                  formControlName="promotionAmount">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Start date</label>
+              <div class="col-sm-4">
+                <input type="datetime-local" class="form-control" name="promotionStartDate" placeholder="Start date"
+                  [(ngModel)]="addCouponData.promotionStartDate" formControlName="promotionStartDate"
+                  (ngModelChange)="onchange1(addCouponData.promotionStartDate)">
+              </div>
+              <label class="col-sm-2 col-form-label">End date</label>
+              <div class="col-sm-4">
+                <input type="datetime-local" [min]="date1" class="form-control" name="promotionEndDate"
+                  placeholder="End date" [(ngModel)]="addCouponData.promotionEndDate"
+                  formControlName="promotionEndDate">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Min.order amount</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionMinAmount" placeholder="Minimum order amount"
+                  [(ngModel)]="addCouponData.promotionMinAmount" formControlName="promotionMinAmount">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Description:</label>
+              <div class="col-sm-8">
+                <textarea type="text" class="form-control" name="promotionDesc" placeholder="Description"
+                  [(ngModel)]="addCouponData.promotionDesc" formControlName="promotionDesc"></textarea>
+              </div>
+            </div>
+            <!-- <div class="form-group row">
+            <div class="description-sm">
+              <ck-editor id="editor1" language="en" [fullPage]="false" name="promotionDesc" [(ngModel)]="addCouponData.promotionDesc" formControlName="promotionDesc"></ck-editor>
+          </div>
+        </div> -->
+            <div class="text-right">
+              <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                [disabled]="imagemessage" (click)="AddPromotion(addCouponData)">Save</button>
+              <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                (click)="CloseCoupon()">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="container-fluid" *ngIf="editcoupanflag == true">
+  <div class="card">
+    <div class="card-header">
+      <h5>Edit Coupon</h5>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-sm-12">
+          <form [formGroup]="CouponUpdateForm">
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Promotion image</label>
+              <div class="col-sm-4">
+                <input type="file" #myImage (change)="onChange1($event)" class="form-control"
+                  placeholder="Promotion image" alife-file-to-base64 [(fileModel)]="editCouponData.promotionImg"
+                  formControlName="promotionImg" accept="image/x-png,image/jpeg">
+                <div class="error" *ngIf="imagemessage == true">*Uploaded image size should be in 498*291</div>
+              </div>
+              <label class="col-sm-2 col-form-label">Promotion name</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="promotionName" placeholder="Promotion name"
+                  [(ngModel)]="editCouponData.promotionName" formControlName="promotionName">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Promotion count</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionCount" placeholder="Promotion count" [(ngModel)]="editCouponData.promotionCount"
+                  formControlName="promotionCount">
+              </div>
+              <label class="col-sm-2 col-form-label">Promotion code</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" name="promotionCode" placeholder="Promotion code"
+                  oninput="this.value = this.value.toUpperCase()" [(ngModel)]="editCouponData.promotionCode"
+                  formControlName="promotionCode">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Promotion type</label>
+              <div class="col-sm-4">
+                <select name="select" class="form-control form-control-default"
+                  [(ngModel)]="editCouponData.promotionType" formControlName="promotionType">
+                  <option value="" selected>Select type</option>
+                  <option value="amount">Amount</option>
+                  <option value="percentage">Percentage</option>
+                </select>
+
+              </div>
+              <label class="col-sm-2 col-form-label">Coupon amount</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionAmount" placeholder="Promotion mount" [(ngModel)]="editCouponData.promotionAmount"
+                  formControlName="promotionAmount">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Start date</label>
+              <div class="col-sm-4">
+                <input type="datetime-local" class="form-control" name="promotionStartDate" placeholder="Start date"
+                  [(ngModel)]="editCouponData.promotionStartDate" formControlName="promotionStartDate"
+                  (ngModelChange)="onchange1(editCouponData.promotionStartDate)">
+              </div>
+              <label class="col-sm-2 col-form-label">End date</label>
+              <div class="col-sm-4">
+                <input type="datetime-local" class="form-control" name="promotionEndDate" placeholder="End date"
+                  [min]="date1" [(ngModel)]="editCouponData.promotionEndDate" formControlName="promotionEndDate">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Min.order amount</label>
+              <div class="col-sm-4">
+                <input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control"
+                  name="promotionMinAmount" placeholder="Minimum order amount"
+                  [(ngModel)]="editCouponData.promotionMinAmount" formControlName="promotionMinAmount">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label class="col-sm-2 col-form-label">Description:</label>
+              <div class="col-sm-8">
+                <textarea type="text" class="form-control" name="promotionDesc" placeholder="Description"
+                  [(ngModel)]="editCouponData.promotionDesc" formControlName="promotionDesc"></textarea>
+              </div>
+            </div>
+            <!-- <div class="form-group row">
+                <div class="description-sm">
+                  <ck-editor id="editor1" language="en" [fullPage]="false" name="promotionDesc" [(ngModel)]="editCouponData.promotionDesc" formControlName="promotionDesc"></ck-editor>
+              </div>
+          </div> -->
+            <div class="text-right">
+              <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block"
+                [disabled]="imagemessage" (click)="UpdatePromotion(editCouponData)">Update</button>
+              <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block"
+                (click)="CloseCoupon()">Close</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

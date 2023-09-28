@@ -1,0 +1,412 @@
+<app-spinner *ngIf="spinner == true"></app-spinner>
+
+  <div class="container-fluid" *ngIf="showaddorder == false && showeditorder == false">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="float1">Order's List</h5>
+                <button type="button" class="btn btn-secondary f-right" data-toggle="modal" data-original-title="test"
+                    data-target="#exampleModal" (click)="open()">Add Order</button>
+            </div>
+            <div class="card-body">
+                <div id="batchDelete" class="category-table custom-datatable transcation-datatable user-image">
+          <div class="project-table">
+            <div id="crm-contact" class="dt-responsive">
+              <div class="row">
+                <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                  <div>
+                    <label class="label-control">Show
+                      <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                        <option [ngValue]="10">10</option>
+                        <option [ngValue]="25">25</option>
+                        <option [ngValue]="50">50</option>
+                        <option [ngValue]="100">100</option>
+                      </select>
+                      entries
+                    </label>
+                  </div>
+                </div>
+                <div class="col-xs-12 col-sm-12 col-md-6">
+                  <div style="text-align: right;">
+                    <label>Search:
+                       <input type="search" [(ngModel)]="filterQuery" class="form-control input-sm full-data-search" placeholder="search by any">
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="panel-heading">User information</div>-->
+              <div >
+              <div class="table-responsive">
+                <table class="table table-striped table-bordered full-data-table" >
+                <!-- [mfData]="data | dataFilter: {vOrderId: filterQuery, createdDateTime: filterQuery, vendorName: filterQuery, vendorTypeName: filterQuery, vendorPriorityName: filterQuery, orderAmount: filterQuery, vendorStatus: filterQuery}
+                " #mf="mfDataTable"
+                  [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder"> -->
+                  <thead>
+                   <tr>
+                      <th>
+                        <mfDefaultSorter by="vOrderId">Order id</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="createdDateTime">Order date</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="vendorName">Vendor name</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="vendorTypeName">Vendor type</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="vendorPriorityName">Priority</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter by="orderAmount">Total amount</mfDefaultSorter>
+                      </th>
+                      <th>
+                          <mfDefaultSorter by="orderStatus">Order status</mfDefaultSorter>
+                      </th>
+                      <th>
+                        <mfDefaultSorter>Action</mfDefaultSorter>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vendorOrder of data;">
+                      <td>{{vendorOrder.vOrderId}}</td>
+                      <td>{{vendorOrder.createdDateTime}}</td>
+                      <td>{{vendorOrder.vendorName}}</td>
+                      <td>{{vendorOrder.vendorTypeName}}</td>
+                      <td>{{vendorOrder.vendorPriorityName}}</td>
+                      <td>₹ {{vendorOrder.orderAmount}}</td>
+                      <!-- <td>{{vendorOrder.vendorStatus}}</td> -->
+                      <td *ngIf="vendorOrder.vendorStatus != 'Items Received'"  style="border-top:0"><span class="badge badge-primary">{{vendorOrder.vendorStatus}}</span></td>
+                      <td *ngIf="vendorOrder.vendorStatus == 'Items Received'"  style="border-top:0"><span class="badge badge-success">{{vendorOrder.vendorStatus}}</span></td>
+                      <td class="action-icon">
+                        <a href="javascript:;" (click)="viewVendorOrder(vendorOrder)" data-target=".bd-example-modal-lg" data-toggle="modal" class="m-r-15 crm-action-edit text-muted text-primary"><i
+                            class="icofont icofont-eye-alt"></i></a>
+                        <a href="javascript:;" *ngIf="vendorOrder.vendorStatus != 'Items Received'" title="Received" class="crm-action-delete text-muted text-success" (click)="vendorReceived(vendorOrder.vendorOrderId)"><i
+                            class="icofont icofont-check-circled"></i></a>
+                            
+                      </td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr>
+                      <td colspan="10">
+                         <!-- <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator> -->
+                         <div *ngIf= "!data?.length" class="no-records">
+                            No records found!...
+                          </div>
+                      </td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+            </div>
+            </div>
+          </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container-fluid" *ngIf="showaddorder == true">
+        <div class="card" >
+          <div class="card-header">
+            <h5>Add Order</h5>
+          </div>
+          <div class="card-body">
+          <div class="row">
+           <div class="col-sm-12">
+            <form [formGroup]="vendorOrderForm">
+                <div class="form-group row">
+                    <label class="col-sm-2 col-form-label">Vendor priority</label>
+                    <div class="col-sm-4">
+                      <select class="custom-select" #vendorpriority class="form-control" (change)="selectvendorPriority(vendorpriority.value)">
+                        <option value="">--Select--</option>
+                        <option *ngFor="let priority of vendorPriority" value={{priority.vendorPriorityName}}>{{priority.vendorPriorityName}}</option>
+                      </select>
+                     </div>
+                  <label class="col-sm-2 col-form-label">Select vendors</label>
+                  <div class="col-sm-4">
+                    <select class="custom-select" class="form-control" name="vendorId" [(ngModel)]="vendorId" formControlName="vendorId">
+                      <option value="" >--Select--</option>
+                      <option *ngFor="let vendor of vendorArray" value={{vendor.vendorId}}>{{vendor.vendorName}}</option>
+                    </select>
+                 </div>
+              </div>
+              <div class="text-right">
+              <button [disabled]="!vendorOrderForm.valid" (click)="Getproducts(vendorId)" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Submit</button>
+              <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="Closebtn()">Close</button>
+            </div>
+            </form>
+            </div>
+          </div>
+        </div>
+        </div>
+        </div>
+
+      <div class="container-fluid" *ngIf="btnsflag == true">
+        <div class="card" >
+          <div class="card-header">
+            <h5>Product's List</h5>
+          </div>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="project-table">
+                    <div id="crm-contact" class="dt-responsive">
+                      <div class="row">
+                        <div class="col-xs-12 col-sm-12 col-sm-12 col-md-6">
+                          <div>
+                            <label class="label-control">Show
+                              <select class="form-control input-sm full-data-show-entry" [(ngModel)]="rowsOnPage">
+                                <option [ngValue]="5">5</option>
+                                <option [ngValue]="10">10</option>
+                                <option [ngValue]="25">25</option>
+                                <option [ngValue]="50">50</option>
+                                <option [ngValue]="100">100</option>
+                              </select>
+                              entries
+                            </label>
+                          </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-6">
+                          <div style="text-align: right;">
+                            <label>Search:
+                               <input type="search" [(ngModel)]="filterQuery" class="form-control input-sm full-data-search" placeholder="Search name">
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+                      <div >
+                      <div class="table-responsive">
+                        <table class="table table-striped table-bordered full-data-table">
+                        <!-- [mfData]="productsList | dataFilter: {categoryName: filterQuery, productName: filterQuery}" #mf="mfDataTable"
+                          [mfRowsOnPage]="rowsOnPage" [(mfSortBy)]="sortBy" [(mfSortOrder)]="sortOrder"> -->
+                          <thead>
+                           <tr>
+                              <th>
+                                <input type="checkbox" [(ngModel)]="selectedAll" (change)="selectAll();"/>
+                               <!-- <mfDefaultSorter>Select items</mfDefaultSorter> -->
+                              </th>
+                              <th>
+                                <mfDefaultSorter by="categoryName">Category name</mfDefaultSorter>
+                              </th>
+                              <th>
+                                <mfDefaultSorter by="productName">Product name</mfDefaultSorter>
+                              </th>
+                              <th>
+                                <mfDefaultSorter by="amount">Amount</mfDefaultSorter>
+                              </th>  
+                              <th>
+                                <mfDefaultSorter by="qunatity">Quantity</mfDefaultSorter>
+                              </th>
+                             
+                              <!-- <th>
+                                <mfDefaultSorter by="total">Total</mfDefaultSorter>
+                              </th> -->
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let product of data;">
+                              <td><input type="checkbox" [(ngModel)]="product.selected"  [checked]="product.selected" (change)="checkIfAllSelected(product.productId);"></td>
+                              <td>{{product.categoryName}}</td>
+                              <td>{{product.productName}} - {{product.netWeight}}{{product.measurementName}}</td>
+                             
+                              <td><input type="number"  onkeypress="return event.charCode >= 48" min="1" class="form-control" [(ngModel)]="product.VendorProdAmt" [disabled]="!product.selected"></td>  
+                              <td><input type="number" onkeypress="return event.charCode >= 48" min="1" class="form-control" [(ngModel)]="product.quantity" [disabled]="!product.selected"></td>
+                              
+                              <!-- <td>{{totalAmount}}</td> -->
+                            </tr>
+                          </tbody>
+                          <tfoot>
+                            <tr>
+                              <td colspan="10">
+                                 <!-- <mfBootstrapPaginator class="pagination-main f-right"></mfBootstrapPaginator> -->
+                                 <div *ngIf= "!productsList?.length" class="no-records">
+                                    No records found!...
+                                  </div>
+                              </td>
+                            </tr>
+                          </tfoot>
+                        </table>
+                      </div>
+                    </div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <button type="submit" (click)="placeOrder(productsList)" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Place Order</button>
+                    <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="Closebtn()">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      </div>
+      
+    <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" *ngIf="viewVendorOrderflag == true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h4 class="modal-title">Vendor Ordered Details: </h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="row">
+                  <div class="col-sm-12">
+                    <table class="table full-data-table">
+                      <tbody>
+                        <tr>
+                          <th scope="row" style="border-top:0">Vendor order Id</th>
+                          <td style="border-top:0">{{vendorOrderData.vOrderId}}</td>
+                          <th scope="row" style="border-top:0">vendor Name</th>
+                          <td style="border-top:0">{{vendorOrderData.vendorName}}</td>
+                        </tr>
+
+                        <tr>
+                          <th scope="row" style="border-top:0">Vendor ordered date</th>
+                          <td style="border-top:0">{{vendorOrderData.createdDateTime}}</td>
+                          <th scope="row" style="border-top:0">Vendor Type</th>
+                          <td style="border-top:0">{{vendorOrderData.vendorTypeName}}</td>
+                        </tr>
+      
+                        <tr>
+                          <th scope="row" style="border-top:0">Vendor entity name</th>
+                          <td style="border-top:0">{{vendorOrderData.entityName}}</td>
+                          <th scope="row" style="border-top:0">Vendor Priority</th>
+                          <td style="border-top:0">{{vendorOrderData.vendorPriorityName}}</td>
+                        </tr>
+      
+                        <tr>
+                        <th scope="row" style="border-top:0">Grand total</th>
+                        <td style="border-top:0">₹ {{vendorOrderData.orderAmount}}</td>
+                        <th scope="row" style="border-top:0"> Vendor Order Status</th>
+                        <td *ngIf="vendorOrderData.vendorStatus != 'Items Received'"  style="border-top:0"><span class="badge badge-primary">{{vendorOrderData.vendorStatus}}</span></td>
+                        <td *ngIf="vendorOrderData.vendorStatus == 'Items Received'"  style="border-top:0"><span class="badge badge-success">{{vendorOrderData.vendorStatus}}</span></td>
+                      </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <!-- <div class="col-sm-3">
+                    <div class="card" style=" box-shadow: 0 -3px 11px 0 rgba(0, 0, 0, 0.2), 0 2px 4px 0 rgba(0, 0, 0, 0.2);">
+                      <div class="card-header" style="padding: 4px;border-bottom: 2px solid #0f369e;">
+                        <h5 class="modal-title">Order Progress</h5>
+                      </div>
+                      <div style="min-height: 10rem; margin-left: 10px; margin-top: 5px; margin-right: 10px;">
+                        <h6>Order Placed</h6>
+                        <h6 style="margin-top: -12px; border-bottom: 1px solid black;">23/01/2020 09:46 AM</h6>
+                      </div>
+                    </div>
+                  </div> -->
+                </div>
+              <table class="table table-striped table-bordered full-data-table" >
+                <thead>
+                  <tr>
+                    <th>Category name</th>
+                    <th>Product name</th>   
+                     <th>Net weight</th>
+                     <th>Amount</th>                 
+                    <th>Quantity</th>
+                    <th>Sub-Total amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let item of VendorProductList">
+                    <td>{{item.categoryName}}</td>
+                    <td>{{item.productName}}</td>
+                    <td>{{item.netWeight}}{{item.measurementName}}</td>
+                    <td>₹ {{item.productAmount}}</td>
+                    <td>{{item.quantity}}</td>
+                    <td>₹ {{item.totalAmount}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- <div class="container-fluid" *ngIf="showeditorder == true">
+            <div class="card" >
+              <div class="card-header">
+                <h5>Edit Order</h5>
+              </div>
+              <div class="card-body">
+              <div class="row">
+               <div class="col-sm-12">
+                <form [formGroup]="userForm" (ngSubmit)="AddEmployee(employeeAddData)">
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Date</label>
+                        <div class="col-sm-4">
+                            <input type="date" class="form-control" placeholder="select Date">
+            
+                         </div>
+                      <label class="col-sm-2 col-form-label">Mobile Number</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Enter Mobile Number">
+        
+                     </div>
+                  </div>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Vendor Code</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Vendor Code">
+                  </div>
+                        <label class="col-sm-2 col-form-label">Vendor Name</label>
+                     <div class="col-sm-4">
+                      <input type="text" class="form-control" placeholder="Vendor Name">
+                  </div>
+                    </div>
+            
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label">Product Name</label>
+                        <div class="col-sm-4">
+                            <input type="text" class="form-control" placeholder="Product Name">
+            
+                         </div>
+                      <label class="col-sm-2 col-form-label">Product Code</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Product Code">
+        
+                     </div>
+                  </div>
+        
+                  <div class="form-group row">
+                      <label class="col-sm-2 col-form-label">Quantity</label>
+                      <div class="col-sm-4">
+                          <input type="text" class="form-control" placeholder="Quantity">
+          
+                       </div>
+                    <label class="col-sm-2 col-form-label">Status</label>
+                    <div class="col-sm-4">
+                      <input type="text" class="form-control" placeholder="Status">
+        
+                   </div>
+                </div>
+            
+                  <div class="form-group row">
+                      <label class="col-sm-2 col-form-label">Total Amount</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Total Amount">
+        
+                     </div>
+                      <label class="col-sm-2 col-form-label">Remarks</label>
+                      <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="Remarks">
+        
+                     </div>
+                  </div>
+                  <div class="text-right">
+                  <button type="submit" class="btn btn-btn btn-primary waves-effect m-r-20 f-w-600 d-inline-block">Save</button>
+                  <button class="btn btn-btn btn-danger waves-effect m-r-20 f-w-600 md-close d-inline-block" (click)="Closebtn()">Close</button>
+                </div>
+                </form>
+                </div>
+              </div>
+            </div>
+            </div>
+            </div> -->
